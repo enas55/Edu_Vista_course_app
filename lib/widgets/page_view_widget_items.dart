@@ -1,7 +1,7 @@
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:flutter/material.dart';
 
-class PageViewWidgetItems extends StatefulWidget {
+class PageViewWidgetItems extends StatelessWidget {
   const PageViewWidgetItems({
     required this.imagePath,
     super.key,
@@ -14,17 +14,12 @@ class PageViewWidgetItems extends StatefulWidget {
   final String subTitle;
 
   @override
-  State<PageViewWidgetItems> createState() => _PageViewWidgetItemsState();
-}
-
-class _PageViewWidgetItemsState extends State<PageViewWidgetItems> {
-  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.asset(
-          widget.imagePath,
+          imagePath,
           height: 200,
           width: 400,
         ),
@@ -32,7 +27,7 @@ class _PageViewWidgetItemsState extends State<PageViewWidgetItems> {
           height: 30,
         ),
         Text(
-          widget.title,
+          title,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -42,7 +37,7 @@ class _PageViewWidgetItemsState extends State<PageViewWidgetItems> {
           height: 20,
         ),
         Text(
-          widget.subTitle,
+          subTitle,
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w300,

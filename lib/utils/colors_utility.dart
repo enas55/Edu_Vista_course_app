@@ -7,4 +7,5 @@ class ColorsUtility {
   static const mediumBlack = Color(0xff1D1B20);
   static const scaffoldBackground = Color(0xfffcfcfc);
   static const skipColor = Color(0xff3A3A3A);
+  static const lightGrey = Color(0xffD1D1D6);
 }
