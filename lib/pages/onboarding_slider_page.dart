@@ -1,5 +1,7 @@
+import 'package:edu_vista_final_project/pages/login_page.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/utils/images_utility.dart';
+import 'package:edu_vista_final_project/widgets/app_elevated_button.dart';
 import 'package:edu_vista_final_project/widgets/page_view_widget_items.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -30,16 +32,25 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
         actions: [
           TextButton(
             onPressed: () {
-              if (currentPage < pagesNum - 1) {
-                pageViewController.nextPage(
-                  duration: const Duration(seconds: 1),
-                  curve: Curves.easeIn,
-                );
-              }
+              // if (currentPage < pagesNum - 1) {
+              //   pageViewController.nextPage(
+              //     duration: const Duration(seconds: 1),
+              //     curve: Curves.easeIn,
+              //   );
+              // }
+              currentPage == 3
+                  ? Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) {
+                          return const LoginPage();
+                        },
+                      ),
+                    )
+                  : pageViewController.jumpToPage(pagesNum - 1);
             },
-            child: const Text(
-              'Skip',
-              style: TextStyle(
+            child: Text(
+              currentPage == 3 ? 'Login' : 'Skip',
+              style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: ColorsUtility.skipColor),
@@ -51,6 +62,7 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
       body: Column(
         children: [
           Expanded(
+            flex: 3,
             child: PageView(
               scrollBehavior: AppScrollBehavior(),
               scrollDirection: Axis.horizontal,
@@ -91,14 +103,14 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
               spacing: 5,
               children: List.generate(pagesNum, (index) {
                 return Container(
-                  width: 40,
+                  width: currentPage == index ? 40 : 20,
                   height: 7,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(128),
                     shape: BoxShape.rectangle,
                     color: currentPage == index
                         ? ColorsUtility.secondry
-                        : ColorsUtility.grey,
+                        : ColorsUtility.mediumBlack,
                   ),
                 );
               }),
@@ -106,52 +118,55 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
-            child: SafeArea(
-              child: Row(
-                mainAxisAlignment: currentPage == 0
-                    ? MainAxisAlignment.end
-                    : MainAxisAlignment.spaceBetween,
-                children: [
-                  if (currentPage > 0)
-                    CircleAvatar(
-                      radius: 25,
-                      backgroundColor: ColorsUtility.lightGrey,
-                      child: IconButton(
-                        onPressed: () {
-                          pageViewController.previousPage(
-                            duration: const Duration(seconds: 1),
-                            curve: Curves.easeIn,
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.arrow_back,
-                          color: ColorsUtility.scaffoldBackground,
-                          size: 30,
+            child: currentPage == 3
+                ? AppElevatedButton(
+                    title: 'Register',
+                    onPressed: () {},
+                  )
+                : Row(
+                    mainAxisAlignment: currentPage == 0
+                        ? MainAxisAlignment.end
+                        : MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (currentPage > 0)
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundColor: ColorsUtility.lightGrey,
+                          child: IconButton(
+                            onPressed: () {
+                              pageViewController.previousPage(
+                                duration: const Duration(seconds: 1),
+                                curve: Curves.easeIn,
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: ColorsUtility.scaffoldBackground,
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      CircleAvatar(
+                        radius: 25,
+                        backgroundColor: ColorsUtility.secondry,
+                        child: IconButton(
+                          onPressed: () {
+                            if (currentPage < pagesNum - 1) {
+                              pageViewController.nextPage(
+                                duration: const Duration(seconds: 1),
+                                curve: Curves.easeIn,
+                              );
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.arrow_forward,
+                            color: ColorsUtility.scaffoldBackground,
+                            size: 30,
+                          ),
                         ),
                       ),
-                    ),
-                  CircleAvatar(
-                    radius: 25,
-                    backgroundColor: ColorsUtility.secondry,
-                    child: IconButton(
-                      onPressed: () {
-                        if (currentPage < pagesNum - 1) {
-                          pageViewController.nextPage(
-                            duration: const Duration(seconds: 1),
-                            curve: Curves.easeIn,
-                          );
-                        }
-                      },
-                      icon: const Icon(
-                        Icons.arrow_forward,
-                        color: ColorsUtility.scaffoldBackground,
-                        size: 30,
-                      ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
           )
         ],
       ),
