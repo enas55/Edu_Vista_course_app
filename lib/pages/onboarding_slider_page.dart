@@ -17,6 +17,12 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
   int pagesNum = 4;
 
   @override
+  void dispose() {
+    pageViewController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
