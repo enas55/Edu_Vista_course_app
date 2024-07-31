@@ -79,13 +79,13 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             child: Wrap(
               alignment: WrapAlignment.center,
               spacing: 5,
               children: List.generate(pagesNum, (index) {
                 return Container(
-                  width: 50,
+                  width: 40,
                   height: 7,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(128),
@@ -99,7 +99,7 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
             child: SafeArea(
               child: Row(
                 mainAxisAlignment: currentPage == 0
