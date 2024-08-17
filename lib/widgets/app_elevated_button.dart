@@ -1,19 +1,15 @@
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:flutter/material.dart';
 
-class AppElevatedButton extends StatefulWidget {
-  const AppElevatedButton({super.key, this.onPressed, required this.title});
+class AppElevatedButton extends StatelessWidget {
+  const AppElevatedButton(
+      {super.key, required this.onPressed, required this.title});
   final void Function()? onPressed;
   final String title;
   @override
-  State<AppElevatedButton> createState() => _AppElevatedButtonState();
-}
-
-class _AppElevatedButtonState extends State<AppElevatedButton> {
-  @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: widget.onPressed,
+      onPressed: onPressed,
       style: const ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(ColorsUtility.secondry),
         foregroundColor:
@@ -32,7 +28,7 @@ class _AppElevatedButtonState extends State<AppElevatedButton> {
           TextStyle(fontSize: 18),
         ),
       ),
-      child: Text(widget.title),
+      child: Text(title),
     );
   }
 }

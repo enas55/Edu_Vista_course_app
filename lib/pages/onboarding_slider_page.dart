@@ -1,4 +1,5 @@
 import 'package:edu_vista_final_project/pages/login_page.dart';
+import 'package:edu_vista_final_project/services/pref_service.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/utils/images_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_elevated_button.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 
 class OnboardingSliderPage extends StatefulWidget {
   const OnboardingSliderPage({super.key});
+  static const String id = 'OnBoardingSlider';
 
   @override
   State<OnboardingSliderPage> createState() => _OnboardingSliderPageState();
@@ -39,17 +41,11 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
               //   );
               // }
               currentPage == 3
-                  ? Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) {
-                          return const LoginPage();
-                        },
-                      ),
-                    )
+                  ? pageViewController.jumpToPage(0)
                   : pageViewController.jumpToPage(pagesNum - 1);
             },
             child: Text(
-              currentPage == 3 ? 'Login' : 'Skip',
+              currentPage == 3 ? 'Back' : 'Skip',
               style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -120,8 +116,8 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
             child: currentPage == 3
                 ? AppElevatedButton(
-                    title: 'Register',
-                    onPressed: () {},
+                    title: 'Login',
+                    onPressed: () => onLogin(),
                   )
                 : Row(
                     mainAxisAlignment: currentPage == 0
@@ -153,7 +149,7 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
                           onPressed: () {
                             if (currentPage < pagesNum - 1) {
                               pageViewController.nextPage(
-                                duration: const Duration(seconds: 1),
+                                duration: const Duration(milliseconds: 300),
                                 curve: Curves.easeIn,
                               );
                             }
@@ -171,6 +167,11 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
         ],
       ),
     );
+  }
+
+  void onLogin() {
+    PrefService.isOnBoardingSeen = true;
+    Navigator.pushReplacementNamed(context, LoginPage.id);
   }
 }
 
