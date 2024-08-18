@@ -1,7 +1,9 @@
+import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_text_field_widget.dart';
 import 'package:edu_vista_final_project/widgets/auth/auth_template_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -34,7 +36,13 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return AuthTemplateWidget(
-      onLogin: () {},
+      onLogin: () async {
+        await context.read<AuthCubit>().login(
+              context: context,
+              emailController: _emailController,
+              passwordController: _passwordController,
+            );
+      },
       body: Column(
         children: [
           Form(

@@ -4,7 +4,7 @@ import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_elevated_button.dart';
 import 'package:flutter/material.dart';
 
-class AuthTemplateWidget extends StatelessWidget {
+class AuthTemplateWidget extends StatefulWidget {
   AuthTemplateWidget({
     super.key,
     this.onLogin,
@@ -16,13 +16,21 @@ class AuthTemplateWidget extends StatelessWidget {
       'onLogin or onSignUp should not be null',
     );
   }
-  final void Function()? onLogin;
-  final void Function()? onSignUp;
+  final Future<void> Function()? onLogin;
+  final Future<void> Function()? onSignUp;
   final Widget body;
 
-  bool get isLogin => onLogin != null;
+  @override
+  State<AuthTemplateWidget> createState() => _AuthTemplateWidgetState();
+}
+
+class _AuthTemplateWidgetState extends State<AuthTemplateWidget> {
+  bool get isLogin => widget.onLogin != null;
+
+  bool _isLoading = false;
 
   String get title => isLogin ? 'Login' : 'Sign Up';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +50,7 @@ class AuthTemplateWidget extends StatelessWidget {
               const SizedBox(
                 height: 100,
               ),
-              body,
+              widget.body,
               Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
@@ -69,9 +77,29 @@ class AuthTemplateWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: AppElevatedButton(
-                  title: title,
-                  onPressed: () {
-                    isLogin ? onLogin! : onSignUp!;
+                  child: _isLoading
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : Text(title),
+                  onPressed: () async {
+                    if (isLogin) {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      await widget.onLogin?.call();
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    } else {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      await widget.onSignUp?.call();
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    }
                   },
                 ),
               ),

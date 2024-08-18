@@ -1,7 +1,9 @@
+import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_text_field_widget.dart';
 import 'package:edu_vista_final_project/widgets/auth/auth_template_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -41,7 +43,13 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return AuthTemplateWidget(
-      onSignUp: () {},
+      onSignUp: () async {
+        await context.read<AuthCubit>().signUp(
+            context: context,
+            emailController: _emailController,
+            nameController: _nameController,
+            passwordController: _passwordController);
+      },
       body: Column(
         children: [
           Form(

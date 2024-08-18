@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "8971056361",
+    "project_id": "edu-vista-909d2",
+    "storage_bucket": "edu-vista-909d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8971056361:android:c18295ef02a3386d7cac78",
+        "android_client_info": {
+          "package_name": "com.example.edu_vista_final_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "8971056361-gdsh7hevbfmkrfhanre5e0chl7goau8o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9cXRKc5P7pWVWDREoL_J6hGiPubuTaFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "8971056361-gdsh7hevbfmkrfhanre5e0chl7goau8o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "8971056361-mrahpchhcbdj9cr1ubujo3iifag5rqh1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.eduVistaFinalProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -116,7 +116,7 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
             child: currentPage == 3
                 ? AppElevatedButton(
-                    title: 'Login',
+                    child: const Text('Login'),
                     onPressed: () => onLogin(),
                   )
                 : Row(
