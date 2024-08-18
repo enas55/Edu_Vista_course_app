@@ -1,8 +1,10 @@
+import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/pages/login_page.dart';
 import 'package:edu_vista_final_project/pages/sign_up_page.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthTemplateWidget extends StatefulWidget {
   AuthTemplateWidget({
@@ -58,7 +60,9 @@ class _AuthTemplateWidgetState extends State<AuthTemplateWidget> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        onForgetPassword(context);
+                      },
                       child: const Text(
                         'Forget Password ?',
                         style: TextStyle(
@@ -230,6 +234,47 @@ class _AuthTemplateWidgetState extends State<AuthTemplateWidget> {
           ],
         ),
       ),
+    );
+  }
+
+  void onForgetPassword(
+    BuildContext context,
+  ) {
+    final TextEditingController emailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Forgot Password'),
+          content: TextField(
+            controller: emailController,
+            decoration: const InputDecoration(
+              labelText: 'Enter your email',
+              hintText: 'example@example.com',
+            ),
+            keyboardType: TextInputType.emailAddress,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await context.read<AuthCubit>().forgotPassword(
+                    emailController: emailController, context: context);
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Text('Send reset link'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

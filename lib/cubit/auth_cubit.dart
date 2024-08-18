@@ -28,7 +28,6 @@ class AuthCubit extends Cubit<AuthState> {
             ),
           );
         }
-        ;
       }
     } on FirebaseAuthException catch (e) {
       if (!context.mounted) return;
