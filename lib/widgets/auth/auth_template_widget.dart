@@ -1,10 +1,8 @@
-import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/pages/login_page.dart';
 import 'package:edu_vista_final_project/pages/sign_up_page.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_elevated_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthTemplateWidget extends StatefulWidget {
   AuthTemplateWidget({
@@ -53,31 +51,6 @@ class _AuthTemplateWidgetState extends State<AuthTemplateWidget> {
                 height: 100,
               ),
               widget.body,
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        onForgetPassword(context);
-                      },
-                      child: const Text(
-                        'Forget Password ?',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: ColorsUtility.secondry,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 70,
-              ),
               Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: AppElevatedButton(
@@ -234,47 +207,6 @@ class _AuthTemplateWidgetState extends State<AuthTemplateWidget> {
           ],
         ),
       ),
-    );
-  }
-
-  void onForgetPassword(
-    BuildContext context,
-  ) {
-    final TextEditingController emailController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Forgot Password'),
-          content: TextField(
-            controller: emailController,
-            decoration: const InputDecoration(
-              labelText: 'Enter your email',
-              hintText: 'example@example.com',
-            ),
-            keyboardType: TextInputType.emailAddress,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                await context.read<AuthCubit>().forgotPassword(
-                    emailController: emailController, context: context);
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Text('Send reset link'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

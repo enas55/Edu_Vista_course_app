@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/firebase_options.dart';
+import 'package:edu_vista_final_project/pages/confirm_reset_password_page.dart';
 import 'package:edu_vista_final_project/pages/home_page.dart';
 import 'package:edu_vista_final_project/pages/login_page.dart';
 import 'package:edu_vista_final_project/pages/onboarding_slider_page.dart';
@@ -63,6 +64,9 @@ class MyApp extends StatelessWidget {
                 builder: (context) => const OnboardingSliderPage());
           case HomePage.id:
             return MaterialPageRoute(builder: (context) => const HomePage());
+          case ConfirmResetPasswordPage.id:
+            return MaterialPageRoute(
+                builder: (context) => const ConfirmResetPasswordPage());
           default:
             return MaterialPageRoute(builder: (context) => const SplashPage());
         }

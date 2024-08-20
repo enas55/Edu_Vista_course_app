@@ -44,75 +44,78 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return AuthTemplateWidget(
       onSignUp: () async {
-        await context.read<AuthCubit>().signUp(
-            context: context,
-            emailController: _emailController,
-            nameController: _nameController,
-            passwordController: _passwordController);
+        if (_formKey.currentState!.validate()) {
+          await context.read<AuthCubit>().signUp(
+              context: context,
+              emailController: _emailController,
+              nameController: _nameController,
+              passwordController: _passwordController);
+        }
       },
       body: Column(
         children: [
           Form(
             key: _formKey,
-            child: Column(
-              children: [
-                AppTextFieldWidget(
-                  title: 'Full Name',
-                  controller: _nameController,
-                  hint: 'Muhammed Rafey',
-                  validator: _nameValidator,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                AppTextFieldWidget(
-                  title: 'Email',
-                  controller: _emailController,
-                  hint: 'demo@mail.com',
-                  validator: _emailValidator,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                AppTextFieldWidget(
-                  title: 'Password',
-                  controller: _passwordController,
-                  hint: '*********',
-                  validator: _passwordValidator,
-                  keyboardType: TextInputType.visiblePassword,
-                  suffixIcon: _suffixonIconWidget(
-                    isVisible: _isPasswordVisible,
-                    toggleVisibility: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
+            child: Center(
+              child: Column(
+                children: [
+                  AppTextFieldWidget(
+                    title: 'Full Name',
+                    controller: _nameController,
+                    hint: 'Muhammed Rafey',
+                    validator: _nameValidator,
+                    keyboardType: TextInputType.emailAddress,
                   ),
-                  obscureText: _isPasswordVisible,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                AppTextFieldWidget(
-                  title: 'Confirm Password',
-                  controller: _confirmPasswordController,
-                  hint: '*********',
-                  validator: (value) => _confirmPasswordValidator(
-                      value, _passwordController.text),
-                  keyboardType: TextInputType.visiblePassword,
-                  suffixIcon: _suffixonIconWidget(
-                    isVisible: _isConfirmPasswordVisible,
-                    toggleVisibility: () {
-                      setState(() {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      });
-                    },
+                  const SizedBox(
+                    height: 20,
                   ),
-                  obscureText: _isConfirmPasswordVisible,
-                ),
-              ],
+                  AppTextFieldWidget(
+                    title: 'Email',
+                    controller: _emailController,
+                    hint: 'demo@mail.com',
+                    validator: _emailValidator,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  AppTextFieldWidget(
+                    title: 'Password',
+                    controller: _passwordController,
+                    hint: '*********',
+                    validator: _passwordValidator,
+                    keyboardType: TextInputType.visiblePassword,
+                    suffixIcon: _suffixonIconWidget(
+                      isVisible: _isPasswordVisible,
+                      toggleVisibility: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                    obscureText: _isPasswordVisible,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  AppTextFieldWidget(
+                    title: 'Confirm Password',
+                    controller: _confirmPasswordController,
+                    hint: '*********',
+                    keyboardType: TextInputType.visiblePassword,
+                    suffixIcon: _suffixonIconWidget(
+                      isVisible: _isConfirmPasswordVisible,
+                      toggleVisibility: () {
+                        setState(() {
+                          _isConfirmPasswordVisible =
+                              !_isConfirmPasswordVisible;
+                        });
+                      },
+                    ),
+                    obscureText: _isConfirmPasswordVisible,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -159,19 +162,9 @@ class _SignUpPageState extends State<SignUpPage> {
     final regex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
     if (!regex.hasMatch(value)) {
       return 'Password must include both letters and numbers';
-    }
-    return null;
-  }
-
-  String? _confirmPasswordValidator(String? value, String originalPassword) {
-    if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
-    }
-
-    if (value != originalPassword) {
+    } else if (_passwordController.text != _confirmPasswordController.text) {
       return 'Passwords do not match';
     }
-
     return null;
   }
 

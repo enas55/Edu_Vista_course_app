@@ -1,4 +1,5 @@
 import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
+import 'package:edu_vista_final_project/pages/reset_password_page.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_text_field_widget.dart';
 import 'package:edu_vista_final_project/widgets/auth/auth_template_widget.dart';
@@ -37,11 +38,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return AuthTemplateWidget(
       onLogin: () async {
-        await context.read<AuthCubit>().login(
-              context: context,
-              emailController: _emailController,
-              passwordController: _passwordController,
-            );
+        if (_formKey.currentState!.validate()) {
+          await context.read<AuthCubit>().login(
+                context: context,
+                emailController: _emailController,
+                passwordController: _passwordController,
+              );
+        }
       },
       body: Column(
         children: [
@@ -80,6 +83,35 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: () async {
+                    Navigator.pushReplacementNamed(
+                        context, ResetPasswordPage.id);
+                    await context.read<AuthCubit>().forgotPassword(
+                          emailController: _emailController,
+                          context: context,
+                        );
+                  },
+                  child: const Text(
+                    'Forget Password ?',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: ColorsUtility.secondry,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 70,
+          ),
         ],
       ),
     );
@@ -101,5 +133,46 @@ class _LoginPageState extends State<LoginPage> {
       return 'Password must be at least 6 characters long';
     }
     return null;
+  }
+
+  void onForgetPassword(
+    BuildContext context,
+  ) {
+    final TextEditingController emailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Forgot Password'),
+          content: TextField(
+            controller: emailController,
+            decoration: const InputDecoration(
+              labelText: 'Enter your email',
+              hintText: 'example@example.com',
+            ),
+            keyboardType: TextInputType.emailAddress,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await context.read<AuthCubit>().forgotPassword(
+                    emailController: emailController, context: context);
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Text('Send reset link'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

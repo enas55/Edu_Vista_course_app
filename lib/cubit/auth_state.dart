@@ -36,3 +36,7 @@ class PasswordResetFailed extends AuthState {
 
   PasswordResetFailed(this.error);
 }
+
+class PasswordResetConfirm extends AuthState {}
+
+class PasswordResetConfirmFailed extends AuthState {}

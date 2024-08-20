@@ -1,4 +1,9 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
+import 'package:edu_vista_final_project/pages/confirm_reset_password_page.dart';
+import 'package:edu_vista_final_project/pages/home_page.dart';
+import 'package:edu_vista_final_project/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
@@ -27,6 +32,7 @@ class AuthCubit extends Cubit<AuthState> {
               content: Text('Logged in sucessfully'),
             ),
           );
+          Navigator.pushReplacementNamed(context, HomePage.id);
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -89,6 +95,7 @@ class AuthCubit extends Cubit<AuthState> {
               content: Text('Account created sucessfully'),
             ),
           );
+          Navigator.pushReplacementNamed(context, HomePage.id);
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -135,6 +142,13 @@ class AuthCubit extends Cubit<AuthState> {
             content: Text('Password reset email sent'),
           ),
         );
+        log('Navigating to ConfirmResetPasswordPage');
+
+        Navigator.pushReplacementNamed(
+          context,
+          ConfirmResetPasswordPage.id,
+          arguments: emailController.text,
+        );
       }
     } on FirebaseAuthException catch (e) {
       emit(PasswordResetFailed(e.message ?? "Unknown error"));
@@ -144,6 +158,53 @@ class AuthCubit extends Cubit<AuthState> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message ?? 'Failed to send password reset email'),
+        ),
+      );
+    } catch (e) {
+      emit(PasswordResetFailed('Something went wrong'));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Something went wrong'),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> confirmPassword({
+    required String email,
+    required String newPassword,
+    required BuildContext context,
+  }) async {
+    try {
+      var credentials = FirebaseAuth.instance.currentUser;
+      if (credentials != null) {
+        await credentials.updatePassword(newPassword);
+
+        emit(PasswordResetConfirm());
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Colors.green,
+              content: Text('Password updated successfully'),
+            ),
+          );
+          Navigator.pushReplacementNamed(context, LoginPage.id);
+        }
+      } else {
+        emit(PasswordResetFailed('User is not authenticated'));
+      }
+    } on FirebaseAuthException catch (e) {
+      emit(PasswordResetFailed(e.message ?? "Unknown error"));
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message ?? 'Failed to reset password'),
         ),
       );
     } catch (e) {
