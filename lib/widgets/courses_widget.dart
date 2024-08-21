@@ -26,7 +26,7 @@ class _CoursesWidgetState extends State<CoursesWidget> {
   void initState() {
     futureCall = FirebaseFirestore.instance
         .collection('courses')
-        .where('rank', isEqualTo: widget.rankValue)
+        // .where('rank', isEqualTo: widget.rankValue)
         .orderBy('created_date', descending: true)
         .get();
     super.initState();

@@ -60,25 +60,22 @@ class _ResetPasswordTemplateWidgetState
                           )
                         : const Text('Submit'),
                     onPressed: () async {
-                      // if (isEmailSubmitted) {
-                      //   setState(() {
-                      //     _isLoading = true;
-                      //   });
-                      //   setState(() {
-                      //     _isLoading = false;
-                      //   });
-                      // } else {
-                      //   setState(() {
-                      //     _isLoading = true;
-                      //   });
-                      //   await widget.onSubmitpassword?.call();
-                      //   setState(() {
-                      //     _isLoading = false;
-                      //   }
-                      //   );
-                      // }
-
-                      _isLoading ? null : _submit;
+                      if (isEmailSubmitted) {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      } else {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        await widget.onSubmitpassword?.call();
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }
                     },
                   ),
                 ),
@@ -88,31 +85,5 @@ class _ResetPasswordTemplateWidgetState
         ),
       ),
     );
-  }
-
-  Future<void> _submit() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      if (isEmailSubmitted) {
-        await widget.onSubmitEmail?.call();
-      } else {
-        await widget.onSubmitpassword?.call();
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('An error occurred: ${e.toString()}'),
-          ),
-        );
-      }
-    }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 }

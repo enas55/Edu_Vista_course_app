@@ -2,6 +2,7 @@ import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_text_field_widget.dart';
 import 'package:edu_vista_final_project/widgets/auth/reset_password_template_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,16 +39,24 @@ class _ConfirmResetPasswordPageState extends State<ConfirmResetPasswordPage> {
     super.dispose();
   }
 
+  final email = FirebaseAuth.instance.currentUser?.email;
+
   @override
   Widget build(BuildContext context) {
     return ResetPasswordTemplateWidget(
       onSubmitpassword: () async {
-        if (_formKey.currentState!.validate()) {
+        if (_formKey.currentState!.validate() && email != null) {
           await context.read<AuthCubit>().confirmPassword(
-                email: _emailController.text,
+                email: email ?? 'Inavalid email',
                 newPassword: _passwordController.text,
                 context: context,
               );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to reset password. Please try again.'),
+            ),
+          );
         }
       },
       body: Column(

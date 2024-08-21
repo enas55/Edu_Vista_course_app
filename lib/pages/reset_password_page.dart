@@ -1,4 +1,5 @@
 import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
+import 'package:edu_vista_final_project/pages/confirm_reset_password_page.dart';
 import 'package:edu_vista_final_project/widgets/app_text_field_widget.dart';
 import 'package:edu_vista_final_project/widgets/auth/reset_password_template_widget.dart';
 import 'package:flutter/material.dart';
