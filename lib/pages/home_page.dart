@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/categories_widget.dart';
 import 'package:edu_vista_final_project/widgets/courses_widget.dart';
@@ -20,8 +19,38 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorsUtility.scaffoldBackground,
-        title: Text(
-            'Welcome Back! ${FirebaseAuth.instance.currentUser?.displayName}'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Row(
+                children: [
+                  const Text(
+                    'Welcome',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    '${FirebaseAuth.instance.currentUser?.displayName}',
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: ColorsUtility.mediumTeal),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.shopping_cart_outlined),
+            ),
+          ],
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -43,14 +72,6 @@ class _HomePageState extends State<HomePage> {
               const CoursesWidget(
                 rankValue: 'top rated',
               ),
-              ElevatedButton(
-                  onPressed: () async {
-                    await FirebaseFirestore.instance
-                        .collection('test')
-                        .doc('x')
-                        .delete();
-                  },
-                  child: const Text('test'))
             ],
           ),
         ),
