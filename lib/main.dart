@@ -1,7 +1,7 @@
 import 'dart:developer';
+import 'package:edu_vista_final_project/blocs/course/course_bloc.dart';
 import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/firebase_options.dart';
-import 'package:edu_vista_final_project/models/course.dart';
 import 'package:edu_vista_final_project/pages/confirm_reset_password_page.dart';
 import 'package:edu_vista_final_project/pages/course_datails_page.dart';
 import 'package:edu_vista_final_project/pages/home_page.dart';
@@ -13,8 +13,11 @@ import 'package:edu_vista_final_project/pages/splash_page.dart';
 import 'package:edu_vista_final_project/services/pref_service.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:device_preview/device_preview.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,8 +34,14 @@ void main() async {
       BlocProvider(
         create: (ctx) => AuthCubit(),
       ),
+      BlocProvider(
+        create: (ctx) => CourseBloc(),
+      ),
     ],
-    child: const MyApp(),
+    child: DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => const MyApp(),
+    ),
   ));
 }
 
@@ -42,6 +51,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scrollBehavior: AppScrollBehavior(),
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -52,7 +64,7 @@ class MyApp extends StatelessWidget {
       ),
       onGenerateRoute: (settings) {
         final String routeName = settings.name ?? '';
-        // final Map? data = settings.arguments as Map?;
+        final dynamic data = settings.arguments;
         switch (routeName) {
           case LoginPage.id:
             return MaterialPageRoute(builder: (context) => const LoginPage());
@@ -70,10 +82,9 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
                 builder: (context) => const ConfirmResetPasswordPage());
           case CourseDatailsPage.id:
-            final course = settings.arguments as Course;
             return MaterialPageRoute(
                 builder: (context) => CourseDatailsPage(
-                      course: course,
+                      course: data,
                     ));
           default:
             return MaterialPageRoute(builder: (context) => const SplashPage());
@@ -82,4 +93,13 @@ class MyApp extends StatelessWidget {
       initialRoute: SplashPage.id,
     );
   }
+}
+
+class AppScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad,
+      };
 }

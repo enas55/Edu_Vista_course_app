@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:edu_vista_final_project/pages/confirm_reset_password_page.dart';
 import 'package:edu_vista_final_project/pages/home_page.dart';
@@ -7,6 +6,7 @@ import 'package:edu_vista_final_project/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'auth_state.dart';
 
@@ -162,14 +162,13 @@ class AuthCubit extends Cubit<AuthState> {
       );
     } catch (e) {
       emit(PasswordResetFailed('Something went wrong'));
+      if (!context.mounted) return;
 
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Something went wrong'),
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong'),
+        ),
+      );
     }
   }
 
@@ -194,8 +193,6 @@ class AuthCubit extends Cubit<AuthState> {
           );
           Navigator.pushReplacementNamed(context, LoginPage.id);
         }
-      } else {
-        emit(PasswordResetFailed('User is not authenticated'));
       }
     } on FirebaseAuthException catch (e) {
       emit(PasswordResetFailed(e.message ?? "Unknown error"));
@@ -210,13 +207,25 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e) {
       emit(PasswordResetFailed('Something went wrong'));
 
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Something went wrong'),
-          ),
-        );
-      }
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong'),
+        ),
+      );
+    }
+  }
+
+  Future<void> checkUserStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? firstLogin = prefs.getBool('first_login');
+
+    if (firstLogin == null || firstLogin == true) {
+      emit(NewUser());
+      await prefs.setBool('first_login', false);
+    } else {
+      emit(OldUser());
     }
   }
 }

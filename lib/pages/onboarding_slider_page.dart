@@ -4,7 +4,6 @@ import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/utils/images_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_elevated_button.dart';
 import 'package:edu_vista_final_project/widgets/page_view_widget_items.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingSliderPage extends StatefulWidget {
@@ -60,7 +59,7 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
           Expanded(
             flex: 3,
             child: PageView(
-              scrollBehavior: AppScrollBehavior(),
+              // scrollBehavior: AppScrollBehavior(),
               scrollDirection: Axis.horizontal,
               controller: pageViewController,
               onPageChanged: (value) {
@@ -175,11 +174,11 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
   }
 }
 
-class AppScrollBehavior extends MaterialScrollBehavior {
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        PointerDeviceKind.trackpad,
-      };
-}
+// class AppScrollBehavior extends MaterialScrollBehavior {
+//   @override
+//   Set<PointerDeviceKind> get dragDevices => {
+//         PointerDeviceKind.touch,
+//         PointerDeviceKind.mouse,
+//         PointerDeviceKind.trackpad,
+//       };
+// }

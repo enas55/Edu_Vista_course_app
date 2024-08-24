@@ -1,7 +1,7 @@
 import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
+import 'package:edu_vista_final_project/widgets/app_elevated_button.dart';
 import 'package:edu_vista_final_project/widgets/app_text_field_widget.dart';
-import 'package:edu_vista_final_project/widgets/auth/reset_password_template_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +22,7 @@ class _ConfirmResetPasswordPageState extends State<ConfirmResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = true;
   bool _isConfirmPasswordVisible = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -43,66 +44,102 @@ class _ConfirmResetPasswordPageState extends State<ConfirmResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ResetPasswordTemplateWidget(
-      onSubmitpassword: () async {
-        if (_formKey.currentState!.validate() && email != null) {
-          await context.read<AuthCubit>().confirmPassword(
-                email: email ?? 'Inavalid email',
-                newPassword: _passwordController.text,
-                context: context,
-              );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to reset password. Please try again.'),
-            ),
-          );
-        }
-      },
-      body: Column(
-        children: [
-          Form(
-            key: _formKey,
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                AppTextFieldWidget(
-                  title: 'Password',
-                  controller: _passwordController,
-                  hint: '*********',
-                  validator: _passwordValidator,
-                  keyboardType: TextInputType.visiblePassword,
-                  suffixIcon: _suffixonIconWidget(
-                    isVisible: _isPasswordVisible,
-                    toggleVisibility: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  ),
-                  obscureText: _isPasswordVisible,
+                const SizedBox(
+                  height: 50,
+                ),
+                const Text(
+                  'Reset Password',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 100,
                 ),
-                AppTextFieldWidget(
-                  title: 'Confirm Password',
-                  controller: _confirmPasswordController,
-                  hint: '*********',
-                  keyboardType: TextInputType.visiblePassword,
-                  suffixIcon: _suffixonIconWidget(
-                    isVisible: _isConfirmPasswordVisible,
-                    toggleVisibility: () {
-                      setState(() {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      });
+                Column(
+                  children: [
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          AppTextFieldWidget(
+                            title: 'Password',
+                            controller: _passwordController,
+                            hint: '*********',
+                            validator: _passwordValidator,
+                            keyboardType: TextInputType.visiblePassword,
+                            suffixIcon: _suffixonIconWidget(
+                              isVisible: _isPasswordVisible,
+                              toggleVisibility: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
+                            ),
+                            obscureText: _isPasswordVisible,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          AppTextFieldWidget(
+                            title: 'Confirm Password',
+                            controller: _confirmPasswordController,
+                            hint: '*********',
+                            keyboardType: TextInputType.visiblePassword,
+                            suffixIcon: _suffixonIconWidget(
+                              isVisible: _isConfirmPasswordVisible,
+                              toggleVisibility: () {
+                                setState(() {
+                                  _isConfirmPasswordVisible =
+                                      !_isConfirmPasswordVisible;
+                                });
+                              },
+                            ),
+                            obscureText: _isConfirmPasswordVisible,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: AppElevatedButton(
+                    child: _isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Text('Submit'),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate() && email != null) {
+                        await context.read<AuthCubit>().confirmPassword(
+                              email: email ?? 'Inavalid email',
+                              newPassword: _passwordController.text,
+                              context: context,
+                            );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Failed to reset password. Please try again.'),
+                          ),
+                        );
+                      }
                     },
                   ),
-                  obscureText: _isConfirmPasswordVisible,
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
