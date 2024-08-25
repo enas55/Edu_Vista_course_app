@@ -10,11 +10,3 @@ final class OnSelectedCourseOptionState extends CourseState {
 
   OnSelectedCourseOptionState(this.courseOption);
 }
-
-class LectureState extends CourseState {}
-
-class LectureChosenState extends CourseState {
-  final Lecture? lecture;
-
-  LectureChosenState(this.lecture);
-}

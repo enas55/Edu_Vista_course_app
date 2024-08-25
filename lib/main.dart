@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:edu_vista_final_project/blocs/course/course_bloc.dart';
+import 'package:edu_vista_final_project/blocs/lectures/lectures_bloc.dart';
 import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/firebase_options.dart';
 import 'package:edu_vista_final_project/pages/confirm_reset_password_page.dart';
@@ -36,6 +37,9 @@ void main() async {
       ),
       BlocProvider(
         create: (ctx) => CourseBloc(),
+      ),
+      BlocProvider(
+        create: (ctx) => LecturesBloc(),
       ),
     ],
     child: DevicePreview(

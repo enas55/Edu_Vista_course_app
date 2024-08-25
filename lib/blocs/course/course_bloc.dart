@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:edu_vista_final_project/models/course.dart';
-import 'package:edu_vista_final_project/models/lecture.dart';
 import 'package:edu_vista_final_project/utils/app_enums.dart';
 import 'package:meta/meta.dart';
 
@@ -15,7 +14,6 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
         ) {
     on<GetCourseEvent>(_onGetCourse);
     on<GetCourseOptionEvent>(_onGetCourseOption);
-    on<LectureChosenEvent>(_onLectureChosen);
   }
 
   Course? course;
@@ -34,13 +32,6 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
       GetCourseOptionEvent event, Emitter<CourseState> emit) {
     emit(
       OnSelectedCourseOptionState(event.courseOption),
-    );
-  }
-
-  FutureOr<void> _onLectureChosen(
-      LectureChosenEvent event, Emitter<CourseState> emit) {
-    emit(
-      LectureChosenState(event.lecture),
     );
   }
 }

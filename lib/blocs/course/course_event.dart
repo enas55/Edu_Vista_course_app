@@ -14,9 +14,3 @@ class GetCourseOptionEvent extends CourseEvent {
 
   GetCourseOptionEvent(this.courseOption);
 }
-
-class LectureChosenEvent extends CourseEvent {
-  final Lecture? lecture;
-
-  LectureChosenEvent(this.lecture);
-}

@@ -70,7 +70,7 @@ class _ChipWidget extends StatelessWidget {
         ),
       ),
       backgroundColor:
-          isSelected ? ColorsUtility.secondry : ColorsUtility.lightGrey,
+          isSelected ? ColorsUtility.secondry : ColorsUtility.veryLightGrey,
       side: BorderSide.none,
       shape: const StadiumBorder(),
       padding: const EdgeInsets.all(8),
