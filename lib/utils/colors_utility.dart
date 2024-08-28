@@ -9,4 +9,7 @@ class ColorsUtility {
   static const skipColor = Color(0xff3A3A3A);
   static const lightGrey = Color(0xffD1D1D6);
   static const veryLightGrey = Color(0xffEBEBEB);
+  static const semiBlack = Color(0xff545454);
+  static const deepPurple = Color(0xff202244);
+  static const deepBrown = Color(0xff472D2D);
 }

@@ -63,8 +63,8 @@ class _CoursesWidgetState extends State<CoursesWidget> {
 
         return GridView.builder(
             shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
               childAspectRatio: 1,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
@@ -93,7 +93,7 @@ class _CoursesWidgetState extends State<CoursesWidget> {
                         courses[index].image ?? 'No Image',
                         height: 105,
                         width: 170,
-                        // fit: BoxFit.cover,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     Padding(
@@ -134,6 +134,7 @@ class _CoursesWidgetState extends State<CoursesWidget> {
                       courses[index].title ?? 'No Title',
                       style: const TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 14),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Row(
                       children: [

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edu_vista_final_project/models/course.dart';
+import 'package:edu_vista_final_project/models/lecture.dart';
 import 'package:edu_vista_final_project/utils/app_enums.dart';
 import 'package:meta/meta.dart';
 
@@ -17,6 +19,29 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
   }
 
   Course? course;
+
+  Future<List<Lecture>?> getLectures() async {
+    if (course == null) {
+      return null;
+    }
+    try {
+      var result = await FirebaseFirestore.instance
+          .collection('courses')
+          .doc(course!.id)
+          .collection('lectures')
+          .orderBy("sort", descending: false)
+          .get();
+
+      return result.docs
+          .map((e) => Lecture.fromJson({
+                'id': e.id,
+                ...e.data(),
+              }))
+          .toList();
+    } catch (e) {
+      return null;
+    }
+  }
 
   FutureOr<void> _onGetCourse(GetCourseEvent event, Emitter<CourseState> emit) {
     if (course != null) {

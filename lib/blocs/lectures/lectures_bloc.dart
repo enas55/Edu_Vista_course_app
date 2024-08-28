@@ -10,12 +10,15 @@ part 'lectures_state.dart';
 class LecturesBloc extends Bloc<LecturesEvent, LecturesState> {
   LecturesBloc() : super(LecturesInitial()) {
     on<LectureChosenEvent>(_onLectureChosen);
+    on<LectureEventInitial>((event, emit) {
+      emit(LecturesInitial());
+    });
   }
+}
 
-  FutureOr<void> _onLectureChosen(
-      LectureChosenEvent event, Emitter<LecturesState> emit) {
-    emit(
-      LectureChosenState(event.lecture),
-    );
-  }
+FutureOr<void> _onLectureChosen(
+    LectureChosenEvent event, Emitter<LecturesState> emit) {
+  emit(
+    LectureChosenState(event.lecture),
+  );
 }
