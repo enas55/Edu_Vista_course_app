@@ -64,9 +64,8 @@ class _CourseLectureWidgetState extends State<CourseLectureWidget> {
                 : ColorsUtility.veryLightGrey,
             child: Padding(
               padding: const EdgeInsets.all(15.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Wrap(
+                alignment: WrapAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

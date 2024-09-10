@@ -37,14 +37,71 @@ class PasswordResetFailed extends AuthState {
   PasswordResetFailed(this.error);
 }
 
-class PasswordResetConfirm extends AuthState {}
-
-class PasswordResetConfirmFailed extends AuthState {
-  final String error;
-
-  PasswordResetConfirmFailed(this.error);
-}
-
+// user status
 class NewUser extends AuthState {}
 
 class OldUser extends AuthState {}
+
+// update user name
+
+class UserNameUpdateLoading extends AuthState {}
+
+class UserNameUpdateSuccess extends AuthState {
+  final String message;
+
+  UserNameUpdateSuccess(this.message);
+}
+
+class UserNameUpdateFailed extends AuthState {
+  final String error;
+
+  UserNameUpdateFailed(this.error);
+}
+
+// update user profile pic
+
+class UserProfilePicUpdateLoading extends AuthState {}
+
+class UserProfilePicUpdateSuccess extends AuthState {
+  final String message;
+  final String? downloadUrl;
+
+  UserProfilePicUpdateSuccess(this.message, {this.downloadUrl});
+}
+
+class UserProfilePicUpdateFailed extends AuthState {
+  final String error;
+
+  UserProfilePicUpdateFailed(this.error);
+}
+
+// log out
+
+class AuthLoading extends AuthState {}
+
+class AuthLogoutSuccess extends AuthState {
+  final String message;
+
+  AuthLogoutSuccess(this.message);
+}
+
+class AuthLogoutFailed extends AuthState {
+  final String error;
+
+  AuthLogoutFailed(this.error);
+}
+// delete account
+
+class AuthDeleteLoading extends AuthState {}
+
+class AuthDeleteSuccess extends AuthState {
+  final String message;
+
+  AuthDeleteSuccess(this.message);
+}
+
+class AuthDeleteFailed extends AuthState {
+  final String error;
+
+  AuthDeleteFailed(this.error);
+}

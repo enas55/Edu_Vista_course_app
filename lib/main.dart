@@ -1,14 +1,19 @@
 import 'dart:developer';
+import 'package:edu_vista_final_project/blocs/cart/cart_bloc.dart';
 import 'package:edu_vista_final_project/blocs/course/course_bloc.dart';
 import 'package:edu_vista_final_project/blocs/lectures/lectures_bloc.dart';
 import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/firebase_options.dart';
-import 'package:edu_vista_final_project/pages/confirm_reset_password_page.dart';
+import 'package:edu_vista_final_project/pages/cart_page.dart';
+import 'package:edu_vista_final_project/pages/category_courses_page.dart';
 import 'package:edu_vista_final_project/pages/course_datails_page.dart';
 import 'package:edu_vista_final_project/pages/home_page.dart';
 import 'package:edu_vista_final_project/pages/login_page.dart';
 import 'package:edu_vista_final_project/pages/onboarding_slider_page.dart';
+import 'package:edu_vista_final_project/pages/payment_method_page.dart';
 import 'package:edu_vista_final_project/pages/reset_password_page.dart';
+import 'package:edu_vista_final_project/pages/see_all_categories_page.dart';
+import 'package:edu_vista_final_project/pages/see_all_courses_page.dart';
 import 'package:edu_vista_final_project/pages/sign_up_page.dart';
 import 'package:edu_vista_final_project/pages/splash_page.dart';
 import 'package:edu_vista_final_project/services/pref_service.dart';
@@ -19,6 +24,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +36,7 @@ void main() async {
   } catch (e) {
     log('Failed to initialize firebase : $e');
   }
+  await dotenv.load(fileName: ".env");
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(
@@ -40,6 +47,9 @@ void main() async {
       ),
       BlocProvider(
         create: (ctx) => LecturesBloc(),
+      ),
+      BlocProvider(
+        create: (context) => CartBloc(),
       ),
     ],
     child: DevicePreview(
@@ -82,13 +92,36 @@ class MyApp extends StatelessWidget {
                 builder: (context) => const OnboardingSliderPage());
           case HomePage.id:
             return MaterialPageRoute(builder: (context) => const HomePage());
-          case ConfirmResetPasswordPage.id:
-            return MaterialPageRoute(
-                builder: (context) => const ConfirmResetPasswordPage());
+          // case ConfirmResetPasswordPage.id:
+          //   return MaterialPageRoute(
+          //       builder: (context) => const ConfirmResetPasswordPage());
           case CourseDatailsPage.id:
             return MaterialPageRoute(
                 builder: (context) => CourseDatailsPage(
                       course: data,
+                    ));
+          case SeeAllCategoriesPage.id:
+            return MaterialPageRoute(
+                builder: (context) => const SeeAllCategoriesPage());
+          case CartPage.id:
+            return MaterialPageRoute(builder: (context) => const CartPage());
+          case PaymentMethodPage.id:
+            return MaterialPageRoute(
+                builder: (context) => const PaymentMethodPage());
+          case SeeAllCoursesPage.id:
+            if (data is String) {
+              return MaterialPageRoute(
+                builder: (context) => SeeAllCoursesPage(
+                  rankValue: data,
+                ),
+              );
+            } else {
+              return null;
+            }
+          case CategoryCoursesPage.id:
+            return MaterialPageRoute(
+                builder: (context) => CategoryCoursesPage(
+                      categoryName: data,
                     ));
           default:
             return MaterialPageRoute(builder: (context) => const SplashPage());

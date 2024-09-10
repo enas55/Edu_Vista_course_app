@@ -34,7 +34,7 @@ class _CourseDatailsPageState extends State<CourseDatailsPage> {
   }
 
   void initAnimation() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 1200));
     if (!mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
@@ -79,32 +79,6 @@ class _CourseDatailsPageState extends State<CourseDatailsPage> {
                     ),
             );
           }),
-
-          // BlocBuilder<LecturesBloc, LecturesState>(
-          //   builder: (context, state) {
-          //     if (state is LectureChosenState) {
-          //       return Container(
-          //         height: 250,
-          //         // color: Colors.red,
-          //         child: VideoBoxWidget(
-          //           url: state.lecture!.lecture_url ?? '',
-          //         ),
-          //       );
-          //     }
-          //     {
-          //       return const Center(
-          //         child: Text(
-          //           'Begin your Course',
-          //           style: TextStyle(
-          //               color: Colors.black,
-          //               fontSize: 20,
-          //               fontWeight: FontWeight.bold),
-          //         ),
-          //       );
-          //     }
-          //   },
-          // ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: AnimatedContainer(
@@ -190,10 +164,6 @@ class _CourseDatailsPageState extends State<CourseDatailsPage> {
                                               is OnSelectedCourseOptionState)
                                           ? CourseOptionsWidget(
                                               onClicked: (lecture) {
-                                                // context.read<CourseBloc>().add(
-                                                //     LectureChosenEvent(
-                                                //         lecture));
-
                                                 context
                                                     .read<LecturesBloc>()
                                                     .add(

@@ -6,6 +6,7 @@ import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/course_certificate_widget.dart';
 import 'package:edu_vista_final_project/widgets/course_download_widget.dart';
 import 'package:edu_vista_final_project/widgets/course_lectures_widget.dart';
+import 'package:edu_vista_final_project/widgets/course_more_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -78,10 +79,15 @@ class _CourseOptionsWidgetState extends State<CourseOptionsWidget> {
         );
 
       case CourseOptions.Certificate:
-        return CourseCertificateWidget(course: widget.course);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showCourseCertificateDialog(context, widget.course);
+        });
+        return const SizedBox.shrink();
 
       case CourseOptions.More:
-        return const SizedBox.shrink();
+        return CourseMoreWidget(
+          course: widget.course,
+        );
       default:
         return Text('InvalidOption : ${widget.courseOption.name}');
     }
@@ -100,145 +106,11 @@ String formatDuration(int? durationInSeconds) {
   }
 }
 
-
-
-      // if (isLoading) {
-      //   return const Center(
-      //     child: CircularProgressIndicator(
-      //       color: ColorsUtility.mediumTeal,
-      //     ),
-      //   );
-      // }
-      // if (lectures == null || lectures!.isEmpty) {
-      //   return const Center(
-      //     child: Text('No Lectures Found'),
-      //   );
-      // } else {
-      //   return GridView.builder(
-      //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      //       crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
-      //       childAspectRatio: 1,
-      //       mainAxisSpacing: 10,
-      //       crossAxisSpacing: 10,
-      //     ),
-      //     itemCount: lectures!.length,
-      //     itemBuilder: (ctx, index) {
-      //       return InkWell(
-      //         onTap: () {
-      //           widget.onClicked(lectures![index]);
-      //           selectedLecture = lectures![index];
-      //           setState(() {});
-      //         },
-      //         child: Card(
-      //           shape: RoundedRectangleBorder(
-      //             borderRadius: BorderRadius.circular(20),
-      //           ),
-      //           color: selectedLecture?.id == lectures![index].id
-      //               ? ColorsUtility.secondry
-      //               : ColorsUtility.veryLightGrey,
-      //           child: Padding(
-      //             padding: const EdgeInsets.all(15.0),
-      //             child: Column(
-      //               mainAxisAlignment: MainAxisAlignment.start,
-      //               crossAxisAlignment: CrossAxisAlignment.start,
-      //               children: [
-      //                 Row(
-      //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                   children: [
-      //                     Row(
-      //                       children: [
-      //                         Text(
-      //                           lectures![index].title ?? 'No Title',
-      //                           style: TextStyle(
-      //                             fontSize: 14,
-      //                             fontWeight: FontWeight.w700,
-      //                             color: selectedLecture?.id ==
-      //                                     lectures![index].id
-      //                                 ? Colors.white
-      //                                 : ColorsUtility.mediumBlack,
-      //                           ),
-      //                         ),
-      //                         const SizedBox(
-      //                           width: 3,
-      //                         ),
-      //                         Text(
-      //                           '${lectures![index].sort}',
-      //                           style: TextStyle(
-      //                             fontSize: 14,
-      //                             fontWeight: FontWeight.w700,
-      //                             color: selectedLecture?.id ==
-      //                                     lectures![index].id
-      //                                 ? Colors.white
-      //                                 : ColorsUtility.mediumBlack,
-      //                           ),
-      //                         ),
-      //                       ],
-      //                     ),
-      //                     Icon(
-      //                       Icons.download_outlined,
-      //                       color: selectedLecture?.id == lectures![index].id
-      //                           ? Colors.white
-      //                           : ColorsUtility.mediumBlack,
-      //                     ),
-      //                   ],
-      //                 ),
-      //                 const SizedBox(
-      //                   height: 5,
-      //                 ),
-      //                 Text(
-      //                   lectures![index].description ?? 'No description',
-      //                   style: TextStyle(
-      //                     fontSize: 14,
-      //                     fontWeight: FontWeight.w700,
-      //                     color: selectedLecture?.id == lectures![index].id
-      //                         ? Colors.white
-      //                         : ColorsUtility.mediumBlack,
-      //                   ),
-      //                 ),
-      //                 const SizedBox(
-      //                   height: 5,
-      //                 ),
-      //                 Text(
-      //                   'Lorem Ipsum is simply dummy text',
-      //                   style: TextStyle(
-      //                     fontSize: 12,
-      //                     fontWeight: FontWeight.w300,
-      //                     color: selectedLecture?.id == lectures![index].id
-      //                         ? Colors.white
-      //                         : ColorsUtility.mediumBlack,
-      //                   ),
-      //                 ),
-      //                 const SizedBox(
-      //                   height: 20,
-      //                 ),
-      //                 Row(
-      //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                   children: [
-      //                     Text(
-      //                       'Duration: ${formatDuration(lectures![index].duration ?? 0)}',
-      //                       style: TextStyle(
-      //                         fontSize: 12,
-      //                         fontWeight: FontWeight.w300,
-      //                         color:
-      //                             selectedLecture?.id == lectures![index].id
-      //                                 ? Colors.white
-      //                                 : ColorsUtility.mediumBlack,
-      //                       ),
-      //                     ),
-      //                     Icon(
-      //                       Icons.play_circle_outline,
-      //                       size: 40,
-      //                       color: selectedLecture?.id == lectures![index].id
-      //                           ? Colors.white
-      //                           : ColorsUtility.mediumBlack,
-      //                     )
-      //                   ],
-      //                 ),
-      //               ],
-      //             ),
-      //           ),
-      //         ),
-      //       );
-      //     },
-      //   );
-      // }
+void _showCourseCertificateDialog(context, Course course) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CourseCertificateWidget(course: course);
+    },
+  );
+}
