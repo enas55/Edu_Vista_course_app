@@ -1,15 +1,10 @@
-import 'dart:developer';
-
 import 'package:edu_vista_final_project/blocs/cart/cart_bloc.dart';
 import 'package:edu_vista_final_project/pages/course_datails_page.dart';
-import 'package:edu_vista_final_project/pages/payment_method_page.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_pannable_rating_bar/flutter_pannable_rating_bar.dart';
-import 'package:paymob_payment/paymob_payment.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -33,10 +28,22 @@ class _CartPageState extends State<CartPage> {
       appBar: AppBar(
         backgroundColor: ColorsUtility.scaffoldBackground,
         title: const Text('Your Cart'),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: ColorsUtility.mediumTeal,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
       ),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
-          if (state is CartUpdated && state.cartItems.isNotEmpty) {
+          if (state is CartLoaded && state.cartItems.isNotEmpty) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -175,11 +182,8 @@ class _CartPageState extends State<CartPage> {
                                               ),
                                               TextButton(
                                                 onPressed: () {
-                                                  BlocProvider.of<CartBloc>(
-                                                          context)
-                                                      .add(
-                                                    RemoveFromCart(course),
-                                                  );
+                                                  context.read<CartBloc>().add(
+                                                      RemoveFromCart(course));
                                                   Navigator.of(context).pop();
                                                 },
                                                 child: const Text('Remove'),
@@ -235,29 +239,10 @@ class _CartPageState extends State<CartPage> {
                         height: 20,
                       ),
                       AppElevatedButton(
-                        onPressed: () async {
-                          // Navigator.pushNamed(context, PaymentMethodPage.id);
-
-                          PaymobPayment.instance.initialize(
-                            apiKey: dotenv.env[
-                                'apiKey']!, // from dashboard Select Settings -> Account Info -> API Key
-                            integrationID: int.parse(dotenv.env[
-                                'integrationID']!), // from dashboard Select Developers -> Payment Integrations -> Online Card ID
-                            iFrameID: int.parse(dotenv.env[
-                                'iFrameID']!), // from paymob Select Developers -> iframes
-                          );
-
-                          final PaymobResponse? response =
-                              await PaymobPayment.instance.pay(
-                            context: context,
-                            currency: "EGP",
-                            amountInCents: "20000", // 200 EGP
-                          );
-
-                          if (response != null) {
-                            log('Response: ${response.transactionID}');
-                            log('Response: ${response.success}');
-                          }
+                        onPressed: () {
+                          context
+                              .read<CartBloc>()
+                              .add(Payment(context, state.cartItems));
                         },
                         child: const Text('Pay with Paymob'),
                       ),

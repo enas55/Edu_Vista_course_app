@@ -92,9 +92,6 @@ class MyApp extends StatelessWidget {
                 builder: (context) => const OnboardingSliderPage());
           case HomePage.id:
             return MaterialPageRoute(builder: (context) => const HomePage());
-          // case ConfirmResetPasswordPage.id:
-          //   return MaterialPageRoute(
-          //       builder: (context) => const ConfirmResetPasswordPage());
           case CourseDatailsPage.id:
             return MaterialPageRoute(
                 builder: (context) => CourseDatailsPage(

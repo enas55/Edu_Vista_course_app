@@ -12,5 +12,13 @@ class AddToCart extends CartEvent {
 
 class RemoveFromCart extends CartEvent {
   final Course course;
+
   RemoveFromCart(this.course);
+}
+
+class Payment extends CartEvent {
+  final BuildContext context;
+  final List<Course> courses;
+
+  Payment(this.context, this.courses);
 }

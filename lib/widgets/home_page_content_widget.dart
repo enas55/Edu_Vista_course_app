@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePageContentWidget extends StatefulWidget {
-  const HomePageContentWidget({super.key});
+  const HomePageContentWidget({
+    super.key,
+  });
 
   @override
   State<HomePageContentWidget> createState() => _HomePageContentWidgetState();
@@ -77,7 +79,10 @@ class _HomePageContentWidgetState extends State<HomePageContentWidget> {
             ),
             IconButton(
               onPressed: () {
-                Navigator.pushNamed(context, CartPage.id);
+                Navigator.pushNamed(
+                  context,
+                  CartPage.id,
+                );
               },
               icon: const Icon(Icons.shopping_cart_outlined),
             ),

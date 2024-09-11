@@ -138,26 +138,31 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               BlocBuilder<AuthCubit, AuthState>(
                                 builder: (context, state) {
-                                  return InkWell(
-                                    onTap: () {
-                                      _showEditDialog(
-                                        onSave: (value, context) async {
-                                          await context
-                                              .read<AuthCubit>()
-                                              .updateDisplayName(
-                                                  value, context);
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          _showEditDialog(
+                                            onSave: (value, context) async {
+                                              await context
+                                                  .read<AuthCubit>()
+                                                  .updateDisplayName(
+                                                      value, context);
+                                            },
+                                            context: context,
+                                          );
                                         },
-                                        context: context,
-                                      );
-                                    },
-                                    child: const Text(
-                                      'Your Name',
-                                      style: TextStyle(
-                                        color: ColorsUtility.mediumTeal,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
+                                        child: const Text(
+                                          'Your Name',
+                                          style: TextStyle(
+                                            color: ColorsUtility.mediumTeal,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   );
                                 },
                               ),
@@ -171,6 +176,25 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                       ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(15.0),
+                      child:
+                          AppExpansionTileWidget(title: 'About Us', children: [
+                        Wrap(
+                          alignment: WrapAlignment.start,
+                          children: [
+                            Text(
+                              """Edu Vista is a course app designed to provide users with access to various educational content. The app features course listings, allowing users to browse and purchase courses, watch video lectures, and track their progress. It includes functionality for users to view course details, instructors, and ratings, while also offering payment integration for purchasing courses. The app supports storing cart items and completed courses, enhancing the user experience by allowing for easy course management and navigation.""",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: ColorsUtility.mediumTeal,
+                              ),
+                            ),
+                          ],
+                        )
+                      ]),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(10.0),

@@ -2,11 +2,13 @@ class User {
   String? profile_Picture;
   String? user_name;
   String? email;
+  String? uid;
 
   User.fromJson(Map<String, dynamic> data) {
     profile_Picture = data['profile_Picture'];
     user_name = data['user_name'];
     email = data['email'];
+    uid = data['uid'];
   }
 
   Map<String, dynamic> toJson() {
@@ -14,6 +16,7 @@ class User {
     data['profile_Picture'] = profile_Picture;
     data['user_name'] = user_name;
     data['email'] = email;
+    data['uid'] = uid;
     return data;
   }
 }
