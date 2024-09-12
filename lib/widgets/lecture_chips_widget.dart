@@ -22,6 +22,7 @@ class _LectureChipsWidgetState extends State<LectureChipsWidget> {
     CourseOptions.Certificate,
     CourseOptions.More
   ];
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(

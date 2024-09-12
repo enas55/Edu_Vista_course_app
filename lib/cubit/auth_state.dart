@@ -42,6 +42,13 @@ class NewUser extends AuthState {}
 
 class OldUser extends AuthState {}
 
+
+class AuthFailure extends AuthState {
+  final String error;
+
+  AuthFailure(this.error);
+}
+
 // update user name
 
 class UserNameUpdateLoading extends AuthState {}

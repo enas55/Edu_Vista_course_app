@@ -7,19 +7,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pannable_rating_bar/flutter_pannable_rating_bar.dart';
 
-class CoursesWidget extends StatefulWidget {
-  const CoursesWidget({this.rankValue, super.key, required this.futureCall});
+class CoursesWidget extends StatelessWidget {
+
+  const CoursesWidget(
+      {this.rankValue,
+      super.key,
+      required this.futureCall,
+      });
+
+
   final String? rankValue;
   final Future<QuerySnapshot<Map<String, dynamic>>> futureCall;
-  @override
-  State<CoursesWidget> createState() => _CoursesWidgetState();
-}
+  
+  
 
-class _CoursesWidgetState extends State<CoursesWidget> {
+  
   @override
   Widget build(BuildContext context) {
+
     return FutureBuilder(
-      future: widget.futureCall,
+      future: futureCall,
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -154,22 +161,34 @@ class _CoursesWidgetState extends State<CoursesWidget> {
                         ),
                         BlocBuilder<CartBloc, CartState>(
                           builder: (context, state) {
-                            return TextButton(
-                                onPressed: () {
-                                  context
-                                      .read<CartBloc>()
-                                      .add(AddToCart(courses[index]));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          '${courses[index].title} added to cart'),
-                                    ),
-                                  );
-                                },
-                                child: const Text(
-                                  'Add to cart',
-                                  style: TextStyle(fontSize: 14),
-                                ));
+                            return FutureBuilder(
+                              future: context
+                                  .read<CartBloc>()
+                                  .isCourseInCart(courses[index]),
+                              builder: (context, snapshot) {
+                                var isInCart = snapshot.data ?? false;
+                                return TextButton(
+                                  onPressed: isInCart
+                                      ? null
+                                      : () {
+                                          context
+                                              .read<CartBloc>()
+                                              .add(AddToCart(courses[index]));
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  '${courses[index].title} added to cart'),
+                                            ),
+                                          );
+                                        },
+                                  child: Text(
+                                    isInCart ? 'Added' : 'Add to cart',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                );
+                              },
+                            );
                           },
                         )
                       ],

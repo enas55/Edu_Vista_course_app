@@ -152,7 +152,7 @@ class _CourseLectureWidgetState extends State<CourseLectureWidget> {
                       ),
                       Icon(
                         Icons.play_circle_outline,
-                        size: 40,
+                        size: 35,
                         color: selectedLecture?.id == widget.lectures![index].id
                             ? Colors.white
                             : ColorsUtility.mediumBlack,

@@ -59,4 +59,6 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
       OnSelectedCourseOptionState(event.courseOption),
     );
   }
+
+  
 }

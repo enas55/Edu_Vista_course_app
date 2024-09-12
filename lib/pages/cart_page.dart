@@ -1,5 +1,6 @@
 import 'package:edu_vista_final_project/blocs/cart/cart_bloc.dart';
 import 'package:edu_vista_final_project/pages/course_datails_page.dart';
+import 'package:edu_vista_final_project/pages/payment_methods_page.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_elevated_button.dart';
 import 'package:flutter/material.dart';
@@ -240,11 +241,9 @@ class _CartPageState extends State<CartPage> {
                       ),
                       AppElevatedButton(
                         onPressed: () {
-                          context
-                              .read<CartBloc>()
-                              .add(Payment(context, state.cartItems));
+                          Navigator.pushNamed(context, PaymentMethodsPage.id);
                         },
-                        child: const Text('Pay with Paymob'),
+                        child: const Text('Continue'),
                       ),
                     ],
                   ),

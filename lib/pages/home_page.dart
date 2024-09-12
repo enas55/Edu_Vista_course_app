@@ -18,27 +18,47 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late PageController _controller;
   int _currentIndex = 0;
 
-  Widget _getPage(int index) {
-    switch (index) {
-      case 0:
-        return const HomePageContentWidget();
-      case 1:
-        return const CoursesPage();
-      case 2:
-        return const SearchPage();
-      case 3:
-        return const ProfilePage();
-      default:
-        return const HomePageContentWidget();
-    }
+  final List<Widget> _pages = [
+    const HomePageContentWidget(),
+    const CoursesPage(),
+    const SearchPage(),
+    const ProfilePage(),
+  ];
+
+  @override
+  void initState() {
+    _controller = PageController(initialPage: _currentIndex);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTab(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    _controller.jumpToPage(index);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _getPage(_currentIndex),
+      body: PageView(
+        controller: _controller,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        children: _pages,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: ColorsUtility.scaffoldBackground,
         selectedItemColor: ColorsUtility.secondry,
@@ -48,10 +68,7 @@ class _HomePageState extends State<HomePage> {
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
-        onTap: (index) {
-          _currentIndex = index;
-          setState(() {});
-        },
+        onTap: _onTab,
         items: [
           const BottomNavigationBarItem(
             icon: Icon(Icons.home),

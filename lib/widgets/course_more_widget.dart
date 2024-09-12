@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edu_vista_final_project/models/course.dart';
+import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_expansion_tile_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -40,6 +41,7 @@ class _CourseMoreWidgetState extends State<CourseMoreWidget> {
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
+                  color: ColorsUtility.mediumTeal,
                 ),
               ),
               subtitle: Text(
@@ -47,6 +49,7 @@ class _CourseMoreWidgetState extends State<CourseMoreWidget> {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
+                  color: ColorsUtility.mediumTeal,
                 ),
               ),
             ),

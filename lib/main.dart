@@ -10,7 +10,8 @@ import 'package:edu_vista_final_project/pages/course_datails_page.dart';
 import 'package:edu_vista_final_project/pages/home_page.dart';
 import 'package:edu_vista_final_project/pages/login_page.dart';
 import 'package:edu_vista_final_project/pages/onboarding_slider_page.dart';
-import 'package:edu_vista_final_project/pages/payment_method_page.dart';
+import 'package:edu_vista_final_project/pages/paid_courses_page.dart';
+import 'package:edu_vista_final_project/pages/payment_methods_page.dart';
 import 'package:edu_vista_final_project/pages/reset_password_page.dart';
 import 'package:edu_vista_final_project/pages/see_all_categories_page.dart';
 import 'package:edu_vista_final_project/pages/see_all_courses_page.dart';
@@ -92,6 +93,12 @@ class MyApp extends StatelessWidget {
                 builder: (context) => const OnboardingSliderPage());
           case HomePage.id:
             return MaterialPageRoute(builder: (context) => const HomePage());
+          // case CoursesPage.id:
+          //   return MaterialPageRoute(builder: (context) => const CoursesPage());
+          // case SearchPage.id:
+          //   return MaterialPageRoute(builder: (context) => const SearchPage());
+          // case ProfilePage.id:
+          //   return MaterialPageRoute(builder: (context) => const ProfilePage());
           case CourseDatailsPage.id:
             return MaterialPageRoute(
                 builder: (context) => CourseDatailsPage(
@@ -100,11 +107,14 @@ class MyApp extends StatelessWidget {
           case SeeAllCategoriesPage.id:
             return MaterialPageRoute(
                 builder: (context) => const SeeAllCategoriesPage());
+          case PaymentMethodsPage.id:
+            return MaterialPageRoute(
+                builder: (context) => const PaymentMethodsPage());
           case CartPage.id:
             return MaterialPageRoute(builder: (context) => const CartPage());
-          case PaymentMethodPage.id:
+          case PaidCoursesPage.id:
             return MaterialPageRoute(
-                builder: (context) => const PaymentMethodPage());
+                builder: (context) => const PaidCoursesPage());
           case SeeAllCoursesPage.id:
             if (data is String) {
               return MaterialPageRoute(

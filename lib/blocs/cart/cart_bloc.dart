@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:edu_vista_final_project/models/course.dart';
+import 'package:edu_vista_final_project/pages/paid_courses_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:meta/meta.dart';
@@ -19,6 +20,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<AddToCart>(onAddToCart);
     on<RemoveFromCart>(_onRemoveFromCart);
     on<Payment>(_paymobPayment);
+    on<LoadPaidCourses>(_loadPaidCourses);
   }
 
   Future<void> _loadCartItemsFromSharedPreferences(
@@ -78,9 +80,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(CartLoading());
     try {
       const double exchangeRate = 50;
-      double totalCartPrice =
-          event.courses.fold(0.0, (sum, course) => sum + course.price!);
-      final priceInEGP = totalCartPrice * exchangeRate;
+      final priceInEGP = event.course.price! * exchangeRate;
       final amountInCents = (priceInEGP * 100).toInt();
 
       PaymobPayment.instance.initialize(
@@ -96,11 +96,17 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       );
 
       if (response != null && response.success) {
-        for (var course in event.courses) {
-          await _savePaidCourse(course.id!);
-        }
+        await _savePaidCourse(event.course);
 
         emit(PaymentSuccess('Successful payment process'));
+
+        if (event.context.mounted) {
+          Navigator.pushNamed(
+            event.context,
+            PaidCoursesPage.id,
+            arguments: event.cartItems,
+          );
+        }
 
         log('Transaction ID: ${response.transactionID}');
         log('Success: ${response.success}');
@@ -114,13 +120,64 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
-  Future<void> _savePaidCourse(String courseId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String> paidCourses = prefs.getStringList('paid_courses') ?? [];
+  // Future<void> _savePaidCourse(String courseId) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final List<String> paidCourses = prefs.getStringList('paid_courses') ?? [];
 
-    if (!paidCourses.contains(courseId)) {
-      paidCourses.add(courseId);
-      await prefs.setStringList('paid_courses', paidCourses);
+  //   if (!paidCourses.contains(courseId)) {
+  //     paidCourses.add(courseId);
+  //     await prefs.setStringList('paid_courses', paidCourses);
+  //   }
+  // }
+
+  Future<void> _savePaidCourse(Course course) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> paidCoursesJson =
+        prefs.getStringList('paid_courses') ?? [];
+
+    final courseJson = jsonEncode(course.toJson());
+    prefs.setString('course_${course.id}', courseJson);
+
+    if (!paidCoursesJson.contains(course.id)) {
+      paidCoursesJson.add(course.id!);
+      await prefs.setStringList('paid_courses', paidCoursesJson);
     }
+  }
+
+  Future<void> _loadPaidCourses(
+      LoadPaidCourses event, Emitter<CartState> emit) async {
+    emit(CartLoading());
+    final prefs = await SharedPreferences.getInstance();
+    final paidCoursesIds = prefs.getStringList('paid_courses');
+
+    if (paidCoursesIds != null && paidCoursesIds.isNotEmpty) {
+      final paidCourses = await _getCoursesByIds(paidCoursesIds);
+      emit(CartLoaded(paidCourses, _calculateTotalPrice()));
+    } else {
+      emit(CartLoaded(const [], 0));
+    }
+  }
+
+  Future<List<Course>> _getCoursesByIds(List<String> courseIds) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<Course> courses = [];
+
+    for (String courseId in courseIds) {
+      final courseJson = prefs.getString('course_$courseId');
+      if (courseJson != null) {
+        final course = Course.fromJson(jsonDecode(courseJson));
+        courses.add(course);
+      }
+    }
+
+    return courses;
+  }
+
+  Future<bool> isCourseInCart(Course course) async{
+    if (state is CartLoaded) {
+      final cartItems = (state as CartLoaded).cartItems;
+      return cartItems.any((item) => item.id == course.id);
+    }
+    return false;
   }
 }

@@ -11,6 +11,14 @@ class SearchPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorsUtility.scaffoldBackground,
+        title: const Text(
+          'Search',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
@@ -42,13 +50,6 @@ class SearchPage extends StatelessWidget {
             CategoriesWidget(),
             SizedBox(
               height: 15,
-            ),
-            Text(
-              'Because you viewed',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
             ),
           ],
         ),

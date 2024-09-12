@@ -59,7 +59,6 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
           Expanded(
             flex: 3,
             child: PageView(
-              // scrollBehavior: AppScrollBehavior(),
               scrollDirection: Axis.horizontal,
               controller: pageViewController,
               onPageChanged: (value) {
@@ -173,12 +172,3 @@ class _OnboardingSliderPageState extends State<OnboardingSliderPage> {
     Navigator.pushReplacementNamed(context, LoginPage.id);
   }
 }
-
-// class AppScrollBehavior extends MaterialScrollBehavior {
-//   @override
-//   Set<PointerDeviceKind> get dragDevices => {
-//         PointerDeviceKind.touch,
-//         PointerDeviceKind.mouse,
-//         PointerDeviceKind.trackpad,
-//       };
-// }

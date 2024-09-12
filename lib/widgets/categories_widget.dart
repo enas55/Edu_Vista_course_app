@@ -4,14 +4,9 @@ import 'package:edu_vista_final_project/pages/category_courses_page.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:flutter/material.dart';
 
-class CategoriesWidget extends StatefulWidget {
+class CategoriesWidget extends StatelessWidget {
   const CategoriesWidget({super.key});
 
-  @override
-  State<CategoriesWidget> createState() => _CategoriesWidgetState();
-}
-
-class _CategoriesWidgetState extends State<CategoriesWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(

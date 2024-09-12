@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:edu_vista_final_project/pages/home_page.dart';
 import 'package:edu_vista_final_project/pages/login_page.dart';
+import 'package:edu_vista_final_project/pages/sign_up_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -12,6 +13,8 @@ part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
+
+  
 
   Future<void> login({
     required TextEditingController emailController,
@@ -25,6 +28,7 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       if (credentials.user != null) {
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -32,6 +36,7 @@ class AuthCubit extends Cubit<AuthState> {
               content: Text('Logged in sucessfully'),
             ),
           );
+
           Navigator.pushReplacementNamed(context, HomePage.id);
         }
       }
@@ -88,6 +93,7 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (credentials.user != null) {
         credentials.user!.updateDisplayName(nameController.text);
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -95,6 +101,7 @@ class AuthCubit extends Cubit<AuthState> {
               content: Text('Account created sucessfully'),
             ),
           );
+
           Navigator.pushReplacementNamed(context, HomePage.id);
         }
       }
@@ -142,7 +149,6 @@ class AuthCubit extends Cubit<AuthState> {
             content: Text('Password reset email sent'),
           ),
         );
-        log('Navigating to ConfirmResetPasswordPage');
 
         Navigator.pushReplacementNamed(
           context,
@@ -173,14 +179,23 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> checkUserStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool? firstLogin = prefs.getBool('first_login');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      bool firstLogin = prefs.getBool('first_login') ?? true;
 
-    if (firstLogin == null || firstLogin == true) {
-      emit(NewUser());
-      await prefs.setBool('first_login', false);
-    } else {
-      emit(OldUser());
+      log('First login status: $firstLogin');
+
+      if (firstLogin) {
+        emit(NewUser());
+        await prefs.setBool('first_login', false);
+        log('Emitted NewUser and updated first_login to false');
+      } else {
+        emit(OldUser());
+        log('Emitted OldUser');
+      }
+    } catch (e) {
+      emit(AuthFailure('Failed to check user status: $e'));
+      log('Error checking user status: $e');
     }
   }
 
@@ -221,7 +236,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     if (imageResult != null) {
       var storageRef = FirebaseStorage.instance
-          .ref('images/${imageResult!.files.first.name}');
+          .ref('images/${imageResult.files.first.name}');
 
       var uploadResult = await storageRef.putData(
           imageResult.files.first.bytes!,
@@ -247,7 +262,10 @@ class AuthCubit extends Cubit<AuthState> {
       await FirebaseAuth.instance.signOut();
 
       final prefs = await SharedPreferences.getInstance();
+
+      bool firstLogin = prefs.getBool('first_login') ?? true;
       await prefs.clear();
+      await prefs.setBool('first_login', firstLogin);
 
       emit(AuthLogoutSuccess('Logged out'));
 
@@ -294,7 +312,7 @@ class AuthCubit extends Cubit<AuthState> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pushReplacementNamed(context, LoginPage.id);
+        Navigator.pushReplacementNamed(context, SignUpPage.id);
       }
     } on FirebaseAuthException catch (e) {
       emit(AuthDeleteFailed(
