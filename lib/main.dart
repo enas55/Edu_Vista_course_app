@@ -50,8 +50,9 @@ void main() async {
         create: (ctx) => LecturesBloc(),
       ),
       BlocProvider(
-        create: (context) => CartBloc(),
+        create: (ctx) => CartBloc(),
       ),
+      
     ],
     child: DevicePreview(
       enabled: !kReleaseMode,
@@ -114,7 +115,9 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (context) => const CartPage());
           case PaidCoursesPage.id:
             return MaterialPageRoute(
-                builder: (context) => const PaidCoursesPage());
+                builder: (context) => PaidCoursesPage(
+                      paidCourses: data,
+                    ));
           case SeeAllCoursesPage.id:
             if (data is String) {
               return MaterialPageRoute(

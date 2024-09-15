@@ -22,12 +22,12 @@ class CartLoadingFailed extends CartState {
 
 // paymob payment
 
-final class PayMob extends CartState {}
+class PaymentInProgress extends CartState {}
 
 class PaymentSuccess extends CartState {
-  final String message;
+  final String transactionId;
 
-  PaymentSuccess(this.message);
+  PaymentSuccess(this.transactionId);
 }
 
 class PaymentFailed extends CartState {
@@ -35,3 +35,23 @@ class PaymentFailed extends CartState {
 
   PaymentFailed(this.error);
 }
+
+// paid courses
+
+class PaidCoursesLoading extends CartState {}
+
+class PaidCoursesLoaded extends CartState {
+  final List<Course> paidCourses;
+
+  PaidCoursesLoaded(this.paidCourses);
+}
+
+class PaidCoursesFailed extends CartState {
+  final String error;
+
+  PaidCoursesFailed(this.error);
+}
+
+// clear cart
+
+class CartCleared extends CartState {}

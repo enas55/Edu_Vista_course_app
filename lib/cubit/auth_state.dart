@@ -49,6 +49,7 @@ class AuthFailure extends AuthState {
   AuthFailure(this.error);
 }
 
+
 // update user name
 
 class UserNameUpdateLoading extends AuthState {}
@@ -111,4 +112,16 @@ class AuthDeleteFailed extends AuthState {
   final String error;
 
   AuthDeleteFailed(this.error);
+}
+
+// google Sign in
+
+class GoogleSignInLoading extends AuthState {}
+
+class GoogleSignInSuccess extends AuthState {}
+
+class GoogleSignInFailed extends AuthState {
+  final String error;
+
+  GoogleSignInFailed(this.error);
 }

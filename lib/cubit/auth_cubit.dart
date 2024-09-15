@@ -1,12 +1,13 @@
 import 'dart:developer';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edu_vista_final_project/pages/home_page.dart';
 import 'package:edu_vista_final_project/pages/login_page.dart';
-import 'package:edu_vista_final_project/pages/sign_up_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 part 'auth_state.dart';
@@ -14,7 +15,8 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
-  
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<void> login({
     required TextEditingController emailController,
@@ -22,13 +24,12 @@ class AuthCubit extends Cubit<AuthState> {
     required BuildContext context,
   }) async {
     try {
-      var credentials = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      var credentials = await _auth.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
 
       if (credentials.user != null) {
-
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -85,8 +86,7 @@ class AuthCubit extends Cubit<AuthState> {
     required BuildContext context,
   }) async {
     try {
-      var credentials =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      var credentials = await _auth.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
@@ -137,8 +137,7 @@ class AuthCubit extends Cubit<AuthState> {
     required BuildContext context,
   }) async {
     try {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: emailController.text);
+      await _auth.sendPasswordResetEmail(email: emailController.text);
 
       emit(PasswordResetEmailSent());
 
@@ -202,12 +201,25 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> updateDisplayName(String name, BuildContext context) async {
     emit(UserNameUpdateLoading());
     try {
-      var credentials = FirebaseAuth.instance.currentUser;
+      var credentials = _auth.currentUser;
       if (credentials == null) {
         emit(UserNameUpdateFailed('No user logged in'));
       } else {
+        await FirebaseFirestore.instance
+            .collection('user')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          'user_name': name,
+        });
+
         await credentials.updateDisplayName(name);
+
         await credentials.reload();
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        await prefs.setString('display_name', name);
+
         log('Name updated to: ${credentials.displayName}');
         emit(UserNameUpdateSuccess('Name updated successfully'));
         if (context.mounted) {
@@ -227,31 +239,55 @@ class AuthCubit extends Cubit<AuthState> {
       );
     }
   }
+  
 
   Future<void> uploadProfilePicture(BuildContext context) async {
     emit(UserProfilePicUpdateLoading());
 
-    var imageResult = await FilePicker.platform
-        .pickFiles(type: FileType.image, withData: true);
+    try {
+      var imageResult = await FilePicker.platform
+          .pickFiles(type: FileType.image, withData: true);
 
-    if (imageResult != null) {
-      var storageRef = FirebaseStorage.instance
-          .ref('images/${imageResult.files.first.name}');
+      if (imageResult != null) {
+        var storageRef = FirebaseStorage.instance
+            .ref('images/${imageResult.files.first.name}');
 
-      var uploadResult = await storageRef.putData(
-          imageResult.files.first.bytes!,
-          SettableMetadata(
-            contentType:
-                'image/${imageResult.files.first.name.split('.').last}',
-          ));
-      if (uploadResult.state == TaskState.success) {
-        var downloadUrl = await uploadResult.ref.getDownloadURL();
-        log('Image upload $downloadUrl');
+        var uploadResult = await storageRef.putData(
+            imageResult.files.first.bytes!,
+            SettableMetadata(
+              contentType:
+                  'image/${imageResult.files.first.name.split('.').last}',
+            ));
 
-        emit(UserProfilePicUpdateSuccess(
-            'Profile picture updated successfully'));
-      } else {
-        emit(UserProfilePicUpdateFailed('Failed to upload profile picture'));
+        if (uploadResult.state == TaskState.success) {
+          var downloadUrl = await uploadResult.ref.getDownloadURL();
+          log('Image upload $downloadUrl');
+
+          if (FirebaseAuth.instance.currentUser != null) {
+            await FirebaseFirestore.instance
+                .collection('user')
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .update({
+              'profile_Picture': downloadUrl,
+            });
+          }
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+
+          await prefs.setString('profile_picture_url', downloadUrl);
+
+          emit(UserProfilePicUpdateSuccess(
+              'Profile picture updated successfully'));
+        } else {
+          emit(UserProfilePicUpdateFailed('Failed to upload profile picture'));
+        }
+      }
+    } catch (e) {
+      emit(UserProfilePicUpdateFailed('Error uploading profile picture: $e'));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error uploading profile picture: $e')),
+        );
       }
     }
   }
@@ -259,7 +295,9 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logout(BuildContext context) async {
     emit(AuthLoading());
     try {
-      await FirebaseAuth.instance.signOut();
+      await _auth.signOut();
+
+      await _googleSignIn.signOut();
 
       final prefs = await SharedPreferences.getInstance();
 
@@ -294,7 +332,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthDeleteLoading());
 
     try {
-      var user = FirebaseAuth.instance.currentUser;
+      var user = _auth.currentUser;
       if (user == null) {
         emit(AuthDeleteFailed('No user is logged in.'));
         return;
@@ -312,7 +350,7 @@ class AuthCubit extends Cubit<AuthState> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pushReplacementNamed(context, SignUpPage.id);
+        Navigator.pushReplacementNamed(context, LoginPage.id);
       }
     } on FirebaseAuthException catch (e) {
       emit(AuthDeleteFailed(
@@ -335,6 +373,50 @@ class AuthCubit extends Cubit<AuthState> {
           ),
         );
       }
+    }
+  }
+
+  Future<void> signInWithGoogle(BuildContext context) async {
+    emit(GoogleSignInLoading());
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        emit(GoogleSignInFailed('Google sign in failed'));
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await _auth.signInWithCredential(credential);
+
+      emit(GoogleSignInSuccess());
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Signed in sucessfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pushNamed(context, HomePage.id);
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sign in failed'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      log('google sign in failed: $e');
+      emit(GoogleSignInFailed(e.toString()));
     }
   }
 }

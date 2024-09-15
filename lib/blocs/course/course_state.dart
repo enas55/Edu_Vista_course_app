@@ -10,3 +10,4 @@ final class OnSelectedCourseOptionState extends CourseState {
 
   OnSelectedCourseOptionState(this.courseOption);
 }
+

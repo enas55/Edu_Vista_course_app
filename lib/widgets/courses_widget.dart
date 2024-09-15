@@ -8,23 +8,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pannable_rating_bar/flutter_pannable_rating_bar.dart';
 
 class CoursesWidget extends StatelessWidget {
-
-  const CoursesWidget(
-      {this.rankValue,
-      super.key,
-      required this.futureCall,
-      });
-
+  const CoursesWidget({
+    this.rankValue,
+    super.key,
+    required this.futureCall,
+  });
 
   final String? rankValue;
   final Future<QuerySnapshot<Map<String, dynamic>>> futureCall;
-  
-  
 
-  
   @override
   Widget build(BuildContext context) {
-
     return FutureBuilder(
       future: futureCall,
       builder: (ctx, snapshot) {
@@ -167,8 +161,8 @@ class CoursesWidget extends StatelessWidget {
                                   .isCourseInCart(courses[index]),
                               builder: (context, snapshot) {
                                 var isInCart = snapshot.data ?? false;
-                                return TextButton(
-                                  onPressed: isInCart
+                                return InkWell(
+                                  onTap: isInCart
                                       ? null
                                       : () {
                                           context
@@ -184,9 +178,36 @@ class CoursesWidget extends StatelessWidget {
                                         },
                                   child: Text(
                                     isInCart ? 'Added' : 'Add to cart',
-                                    style: const TextStyle(fontSize: 14),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: isInCart
+                                          ? ColorsUtility.lightGrey
+                                          : ColorsUtility.mediumTeal,
+                                    ),
                                   ),
                                 );
+
+                                // TextButton(
+                                //   onPressed: isInCart
+                                //       ? null
+                                //       : () {
+                                //           context
+                                //               .read<CartBloc>()
+                                //               .add(AddToCart(courses[index]));
+                                //           ScaffoldMessenger.of(context)
+                                //               .showSnackBar(
+                                //             SnackBar(
+                                //               content: Text(
+                                //                   '${courses[index].title} added to cart'),
+                                //             ),
+                                //           );
+                                //         },
+                                //   child: Text(
+                                //     isInCart ? 'Added' : 'Add to cart',
+                                //     style: const TextStyle(fontSize: 14),
+                                //   ),
+                                // );
                               },
                             );
                           },

@@ -14,3 +14,4 @@ class GetCourseOptionEvent extends CourseEvent {
 
   GetCourseOptionEvent(this.courseOption);
 }
+

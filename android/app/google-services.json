@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "8971056361-2vumo3570eussrj2pgkhlv771tc5651v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.edu_vista_final_project",
+            "certificate_hash": "86fec319fb6c57e125d86b3bbeaef62ae318076c"
+          }
+        },
+        {
           "client_id": "8971056361-gdsh7hevbfmkrfhanre5e0chl7goau8o.apps.googleusercontent.com",
           "client_type": 3
         }

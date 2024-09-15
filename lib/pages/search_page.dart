@@ -44,12 +44,19 @@ class SearchPage extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(
+             SizedBox(
               height: 15,
             ),
             CategoriesWidget(),
-            SizedBox(
+             SizedBox(
               height: 15,
+            ),
+             Text(
+              'Because You Viewed',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),

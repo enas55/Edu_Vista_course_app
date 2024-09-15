@@ -1,8 +1,10 @@
+import 'package:edu_vista_final_project/cubit/auth_cubit.dart';
 import 'package:edu_vista_final_project/pages/login_page.dart';
 import 'package:edu_vista_final_project/pages/sign_up_page.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
 import 'package:edu_vista_final_project/widgets/app_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthTemplateWidget extends StatefulWidget {
   AuthTemplateWidget({
@@ -151,22 +153,35 @@ class _AuthTemplateWidgetState extends State<AuthTemplateWidget> {
                   ),
                 ),
                 Expanded(
-                  child: InkWell(
-                    onTap: () {},
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 82,
-                        height: 46,
-                        decoration: BoxDecoration(
-                            color: ColorsUtility.scaffoldBackground,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: ColorsUtility.lightGrey)),
-                        child: Image.asset(
-                          'assets/images/google_logo.png',
+                  child: BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
+                      if (state is GoogleSignInLoading) {
+                        return const CircularProgressIndicator();
+                      }
+                      return InkWell(
+                        onTap: () {
+                          context.read<AuthCubit>().signInWithGoogle(context);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Container(
+                            width: 96,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: ColorsUtility.scaffoldBackground,
+                                borderRadius: BorderRadius.circular(10),
+                                border:
+                                    Border.all(color: ColorsUtility.lightGrey)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                'assets/images/google_logo.png',
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ),
               ],

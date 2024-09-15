@@ -79,8 +79,7 @@ class SeeAllCategoriesPage extends StatelessWidget {
                       .toList() ??
                   []);
 
-              return Expanded(
-                  child: ListView.builder(
+              return ListView.builder(
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
                   return Padding(
@@ -122,7 +121,7 @@ class SeeAllCategoriesPage extends StatelessWidget {
                         ],
                       ));
                 },
-              ));
+              );
             }),
       ),
     );

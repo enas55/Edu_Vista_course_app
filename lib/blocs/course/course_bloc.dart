@@ -54,11 +54,9 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
   }
 
   FutureOr<void> _onGetCourseOption(
-      GetCourseOptionEvent event, Emitter<CourseState> emit) {
+      GetCourseOptionEvent event, Emitter<CourseState> emit) async {
     emit(
       OnSelectedCourseOptionState(event.courseOption),
     );
   }
-
-  
 }

@@ -15,12 +15,15 @@ part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
   List<Course> _cartItems = [];
+  List<Course> _paidCourses = [];
+
   CartBloc() : super(CartInitial()) {
     on<LoadCart>(_loadCartItemsFromSharedPreferences);
-    on<AddToCart>(onAddToCart);
+    on<AddToCart>(_onAddToCart);
     on<RemoveFromCart>(_onRemoveFromCart);
     on<Payment>(_paymobPayment);
     on<LoadPaidCourses>(_loadPaidCourses);
+    on<DeletePaidCourse>(_onDeletePaidCourse);
   }
 
   Future<void> _loadCartItemsFromSharedPreferences(
@@ -48,25 +51,17 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     prefs.setString('cartItems', cartItemsJson);
   }
 
-  FutureOr<void> onAddToCart(AddToCart event, Emitter<CartState> emit) async {
+  FutureOr<void> _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
     _cartItems.add(event.course);
-    _saveCartItemsToSharedPreferences();
-    emit(CartLoaded(
-      _cartItems,
-      _calculateTotalPrice(),
-    ));
+    await _saveCartItemsToSharedPreferences();
+    emit(CartLoaded(_cartItems, _calculateTotalPrice()));
   }
 
   FutureOr<void> _onRemoveFromCart(
       RemoveFromCart event, Emitter<CartState> emit) async {
     _cartItems.remove(event.course);
-    _saveCartItemsToSharedPreferences();
-    emit(
-      CartLoaded(
-        _cartItems,
-        _calculateTotalPrice(),
-      ),
-    );
+    await _saveCartItemsToSharedPreferences();
+    emit(CartLoaded(_cartItems, _calculateTotalPrice()));
   }
 
   double _calculateTotalPrice() {
@@ -78,102 +73,94 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   Future<void> _paymobPayment(Payment event, Emitter<CartState> emit) async {
     emit(CartLoading());
-    try {
-      const double exchangeRate = 50;
-      final priceInEGP = event.course.price! * exchangeRate;
-      final amountInCents = (priceInEGP * 100).toInt();
 
-      PaymobPayment.instance.initialize(
-        apiKey: dotenv.env['apiKey']!,
-        integrationID: int.parse(dotenv.env['integrationID']!),
-        iFrameID: int.parse(dotenv.env['iFrameID']!),
-      );
+    PaymobPayment.instance.initialize(
+      apiKey: dotenv.env['apiKey']!,
+      integrationID: int.parse(dotenv.env['integrationID']!),
+      iFrameID: int.parse(dotenv.env['iFrameID']!),
+    );
 
-      final PaymobResponse? response = await PaymobPayment.instance.pay(
-        context: event.context,
-        currency: "EGP",
-        amountInCents: amountInCents.toString(),
-      );
+    int successfulPayments = 0;
 
-      if (response != null && response.success) {
-        await _savePaidCourse(event.course);
+    for (int i = 0; i < event.cartItems.length; i++) {
+      final course = event.cartItems[i];
 
-        emit(PaymentSuccess('Successful payment process'));
+      try {
+        final amountInEgp = (course.price! * 45.37).toDouble();
 
-        if (event.context.mounted) {
-          Navigator.pushNamed(
-            event.context,
-            PaidCoursesPage.id,
-            arguments: event.cartItems,
-          );
+        final PaymobResponse? response = await PaymobPayment.instance.pay(
+          context: event.context,
+          currency: "EGP",
+          amountInCents: amountInEgp.toString(),
+        );
+
+        if (response != null && response.success) {
+          if (!_paidCourses.any((paidCourse) => paidCourse.id == course.id)) {
+            _paidCourses.add(course);
+            successfulPayments++;
+          }
+
+          log('Payment successful for course: ${course.title}');
+        } else {
+          log('Payment failed for course: ${course.title}');
         }
-
-        log('Transaction ID: ${response.transactionID}');
-        log('Success: ${response.success}');
-      } else {
-        emit(PaymentFailed('Payment failed or response is null'));
-        log('Payment failed or response is null');
+      } catch (e) {
+        log('Payment error for course: ${course.title} - $e');
       }
-    } catch (e) {
-      emit(PaymentFailed('Something went wrong : $e'));
-      log('Payment Error: $e');
+    }
+
+    await _savePaidCoursesToSharedPreferences();
+    await _clearCart();
+
+    if (event.context.mounted) {
+      ScaffoldMessenger.of(event.context).showSnackBar(
+        SnackBar(
+          content: Text('$successfulPayments payment successful'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      Navigator.of(event.context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => PaidCoursesPage(paidCourses: _paidCourses),
+        ),
+      );
     }
   }
 
-  // Future<void> _savePaidCourse(String courseId) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final List<String> paidCourses = prefs.getStringList('paid_courses') ?? [];
-
-  //   if (!paidCourses.contains(courseId)) {
-  //     paidCourses.add(courseId);
-  //     await prefs.setStringList('paid_courses', paidCourses);
-  //   }
-  // }
-
-  Future<void> _savePaidCourse(Course course) async {
+  Future<void> _savePaidCoursesToSharedPreferences() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<String> paidCoursesJson =
-        prefs.getStringList('paid_courses') ?? [];
-
-    final courseJson = jsonEncode(course.toJson());
-    prefs.setString('course_${course.id}', courseJson);
-
-    if (!paidCoursesJson.contains(course.id)) {
-      paidCoursesJson.add(course.id!);
-      await prefs.setStringList('paid_courses', paidCoursesJson);
-    }
+    final paidCoursesJson = jsonEncode(_paidCourses);
+    prefs.setString('paidCourses', paidCoursesJson);
   }
 
   Future<void> _loadPaidCourses(
       LoadPaidCourses event, Emitter<CartState> emit) async {
-    emit(CartLoading());
     final prefs = await SharedPreferences.getInstance();
-    final paidCoursesIds = prefs.getStringList('paid_courses');
-
-    if (paidCoursesIds != null && paidCoursesIds.isNotEmpty) {
-      final paidCourses = await _getCoursesByIds(paidCoursesIds);
-      emit(CartLoaded(paidCourses, _calculateTotalPrice()));
-    } else {
-      emit(CartLoaded(const [], 0));
+    final paidCoursesJson = prefs.getString('paidCourses');
+    if (paidCoursesJson != null) {
+      final paidCourses = List<Course>.from(
+        jsonDecode(paidCoursesJson).map((item) => Course.fromJson(item)),
+      );
+      _paidCourses = paidCourses;
+      emit(PaidCoursesLoaded(_paidCourses));
     }
   }
 
-  Future<List<Course>> _getCoursesByIds(List<String> courseIds) async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<Course> courses = [];
-
-    for (String courseId in courseIds) {
-      final courseJson = prefs.getString('course_$courseId');
-      if (courseJson != null) {
-        final course = Course.fromJson(jsonDecode(courseJson));
-        courses.add(course);
-      }
-    }
-
-    return courses;
+  Future<void> _onDeletePaidCourse(
+      DeletePaidCourse event, Emitter<CartState> emit) async {
+    _paidCourses.remove(event.course);
+    await _savePaidCoursesToSharedPreferences();
+    emit(PaidCoursesLoaded(_paidCourses));
   }
 
-  Future<bool> isCourseInCart(Course course) async{
+  Future<void> _clearCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('cartItems');
+    _cartItems.clear();
+  }
+
+  Future<bool> isCourseInCart(Course course) async {
     if (state is CartLoaded) {
       final cartItems = (state as CartLoaded).cartItems;
       return cartItems.any((item) => item.id == course.id);

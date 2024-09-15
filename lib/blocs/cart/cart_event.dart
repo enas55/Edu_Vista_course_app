@@ -23,4 +23,16 @@ class Payment extends CartEvent {
   Payment(this.context, this.course, this.cartItems);
 }
 
+// paid courses
+
 class LoadPaidCourses extends CartEvent {}
+
+class DeletePaidCourse extends CartEvent {
+  final Course course;
+
+  DeletePaidCourse(this.course);
+}
+
+// clearing cart
+
+class ClearCart extends CartEvent {}

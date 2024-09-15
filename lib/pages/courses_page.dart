@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edu_vista_final_project/blocs/cart/cart_bloc.dart';
 import 'package:edu_vista_final_project/pages/cart_page.dart';
 import 'package:edu_vista_final_project/utils/colors_utility.dart';
-import 'package:edu_vista_final_project/utils/images_utility.dart';
 import 'package:edu_vista_final_project/widgets/courses_widget.dart';
+import 'package:edu_vista_final_project/widgets/paid_courses_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CoursesPage extends StatefulWidget {
   const CoursesPage({super.key});
@@ -13,7 +15,7 @@ class CoursesPage extends StatefulWidget {
 }
 
 class _CoursesPageState extends State<CoursesPage> {
-  bool _showAllCourses = false;
+  bool _showAllCourses = true;
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +50,68 @@ class _CoursesPageState extends State<CoursesPage> {
               children: [
                 InkWell(
                   onTap: () {
-                    _showAllCourses = !_showAllCourses;
+                    _showAllCourses = true;
                     setState(() {});
                   },
-                  child: const Chip(
-                    label: Text('All'),
-                    backgroundColor: ColorsUtility.veryLightGrey,
-                    labelStyle: TextStyle(
+                  child: Chip(
+                    label: Text(
+                      'All',
+                      style: TextStyle(
+                        color: _showAllCourses
+                            ? Colors.white
+                            : ColorsUtility.mediumBlack,
+                      ),
+                    ),
+                    backgroundColor: _showAllCourses
+                        ? ColorsUtility.secondry
+                        : ColorsUtility.veryLightGrey,
+                    labelStyle: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
-                    shape: CircleBorder(
-                      side: BorderSide(color: ColorsUtility.veryLightGrey),
+                    shape: const CircleBorder(
+                      side: BorderSide(
+                        color: ColorsUtility.veryLightGrey,
+                      ),
                     ),
                   ),
                 ),
+                BlocBuilder<CartBloc, CartState>(builder: (context, state) {
+                  return InkWell(
+                    onTap: () {
+                      _showAllCourses = false;
+
+                      context.read<CartBloc>().add(LoadPaidCourses());
+
+                      setState(() {});
+                    },
+                    child: Chip(
+                      label: Text(
+                        'Your Courses',
+                        style: TextStyle(
+                          color: !_showAllCourses
+                              ? Colors.white
+                              : ColorsUtility.mediumBlack,
+                        ),
+                      ),
+                      backgroundColor: !_showAllCourses
+                          ? ColorsUtility.secondry
+                          : ColorsUtility.veryLightGrey,
+                      labelStyle: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(30),
+                        ),
+                        side: BorderSide(
+                          color: ColorsUtility.veryLightGrey,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -80,9 +129,29 @@ class _CoursesPageState extends State<CoursesPage> {
                           .get(),
                     ),
                   )
-                : Image.asset(
-                    ImageUtility.frame,
+                : BlocBuilder<CartBloc, CartState>(
+                    builder: (context, state) {
+                      if (state is PaidCoursesLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is PaidCoursesLoaded) {
+                        if (state.paidCourses.isEmpty) {
+                          return const Center(child: Text('No courses found'));
+                        } else {
+                          return PaidCoursesWidget(
+                              paidCourses: state.paidCourses);
+                        }
+                      } else if (state is PaidCoursesFailed) {
+                        return Center(
+                            child: Text(
+                                'Failed to load paid courses: ${state.error}'));
+                      }
+                      return const Center(child: Text('No paid courses found'));
+                    },
                   ),
+
+            //  Image.asset(
+            //     ImageUtility.frame,
+            //   ),
           ),
         ],
       ),
