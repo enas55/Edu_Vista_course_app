@@ -1,16 +1,33 @@
-# edu_vista_final_project
 
-A new Flutter project.
+Edu Vista
+A Flutter-based course application with Firebase backend and BLoC state management.
 
-## Getting Started
+About the App
+Edu Vista is a modern educational mobile application built using Flutter. It allows users to browse, purchase, and view online courses. The app is designed to offer a smooth and responsive learning experience across all mobile platforms.
 
-This project is a starting point for a Flutter application.
+Features
+ Firebase Authentication (Sign up, Login, Password Reset)
 
-A few resources to get you started if this is your first Flutter project:
+ Course Management (View categories, course details, lectures)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+ Video Lectures playback
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+ Payment Integration
+
+ Course certificate display
+
+ BLoC pattern for state management
+
+ Firebase Firestore for real-time data handling
+
+ Profile management (edit name, upload profile image)
+
+Built With
+
+Flutter – Frontend framework
+
+Firebase – Backend services: Auth, Firestore, Storage
+
+BLoC – State management
+
+SharedPreferences – Local data persistence
