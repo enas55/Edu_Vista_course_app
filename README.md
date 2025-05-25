@@ -34,6 +34,7 @@ SharedPreferences – Local data persistence
 
 Demo
 
+https://github.com/user-attachments/assets/fe887e50-aaa3-4d80-8759-6f1cb7f9b50c
 
-https://github.com/user-attachments/assets/664f21a1-a6f6-47c1-8d49-1ba8b6c32cdd
+
 
