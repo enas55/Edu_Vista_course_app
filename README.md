@@ -1,3 +1,4 @@
+![WhatsApp Image 2025-05-25 at 3 54 59 PM (1)](https://github.com/user-attachments/assets/5d68ce12-8bc0-4851-b8ca-6f051653108a)
 
 Edu Vista
 A Flutter-based course application with Firebase backend and BLoC state management.
@@ -31,3 +32,5 @@ Firebase – Backend services: Auth, Firestore, Storage
 BLoC – State management
 
 SharedPreferences – Local data persistence
+
+Screenshots![WhatsApp Image 2025-05-25 at 3 54 59 PM (2)](https://github.com/user-attachments/assets/da180c9d-30da-41b9-9f9f-fe7b7064b955)
